@@ -261,6 +261,36 @@
             cursor: not-allowed;
         }
 
+        /* Seletor de múltiplas famílias */
+        .family-selector-box {
+            background: #fdfdfd;
+            border: 2px dashed var(--verde-oliva);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .family-opt-btn {
+            background: var(--verde-claro);
+            color: var(--verde-escuro);
+            border: 1px solid var(--verde-oliva);
+            padding: 12px;
+            margin: 8px 0;
+            width: 100%;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .family-opt-btn:hover {
+            background: var(--verde-oliva);
+            color: #fff;
+        }
+
         .rsvp-family-list {
             margin-top: 25px;
             background: var(--verde-claro);
@@ -382,6 +412,12 @@
                 <button type="button" id="btn-buscar" class="btn" onclick="buscarConvidado()">Buscar Convite</button>
             </div>
 
+            <!-- Caixa de Seleção de Múltiplas Famílias Homônimas -->
+            <div id="multiple-families-box" class="family-selector-box">
+                <p style="font-weight: bold; margin-bottom: 10px; color: var(--verde-escuro);">Encontramos mais de um convite com este nome. Por favor, clique no seu grupo familiar:</p>
+                <div id="multiple-families-options"></div>
+            </div>
+
             <div id="message-container" class="message-box"></div>
 
             <div id="family-panel" class="rsvp-family-list">
@@ -419,11 +455,13 @@
             const termoBusca = limparTexto(campoBusca.value);
             const btnBuscar = document.getElementById('btn-buscar');
             const panel = document.getElementById('family-panel');
-            const container = document.getElementById('family-members-container');
+            const multBox = document.getElementById('multiple-families-box');
+            const multOptions = document.getElementById('multiple-families-options');
             
             exibirMensagem("", "", "", false); 
             panel.style.display = 'none';
-            container.innerHTML = '';
+            multBox.style.display = 'none';
+            multOptions.innerHTML = '';
 
             if (!termoBusca) {
                 exibirMensagem("Por favor, digite um nome para pesquisar.", "#721c24", "#f8d7da", true);
@@ -436,34 +474,29 @@
             fetch(urlWebhook)
                 .then(response => response.json())
                 .then(listaConvidados => {
-                    const resultado = listaConvidados.find(c => {
+                    // FILTRA todas as ocorrências encontradas na lista (em vez de parar no primeiro)
+                    const resultados = listaConvidados.filter(c => {
                         const nomeCadastrado = limparTexto(c.buscaNome);
                         return nomeCadastrado.includes(termoBusca) || termoBusca.includes(nomeCadastrado);
                     });
 
-                    if (resultado) {
-                        dadosGrupoAtual = resultado;
-                        document.getElementById('family-title').innerText = resultado.familia;
-                        
-                        resultado.membros.forEach((membro, index) => {
-                            // Suporta tanto o valor antigo salvo ("Não Comparecer") quanto o novo ("Não Comparecerei") para marcar no menu
-                            const statusAnterior = membro.status || "Pendente";
-                            const isNaoComparecer = (statusAnterior === 'Não Comparecer' || statusAnterior === 'Não Comparecerei');
-                            
-                            const row = document.createElement('div');
-                            row.className = 'family-member-row';
-                            row.innerHTML = `
-                                <span><strong>${membro.nome}</strong></span>
-                                <select id="member-status-${index}" style="width: auto; margin: 0; padding: 5px 10px; border-radius: 4px;">
-                                    <option value="Pendente" ${statusAnterior === 'Pendente' ? 'selected' : ''}>Pendente</option>
-                                    <option value="Confirmado" ${statusAnterior === 'Confirmado' ? 'selected' : ''}>Confirmado</option>
-                                    <option value="Não Comparecerei" ${isNaoComparecer ? 'selected' : ''}>Não poderei ir</option>
-                                </select>
-                            `;
-                            container.appendChild(row);
+                    if (resultados.length === 1) {
+                        // Se encontrou apenas uma família, abre ela direto na hora
+                        exibirPainelFamilia(resultados[0]);
+                    } else if (resultados.length > 1) {
+                        // Se houver mais de uma família com esse nome (Ex: múltiplos "Luis Felipe")
+                        resultados.forEach(grupo => {
+                            const btnOpt = document.createElement('button');
+                            btnOpt.className = 'family-opt-btn';
+                            btnOpt.type = 'button';
+                            btnOpt.innerText = `👨‍👩‍👧‍👦 ${grupo.familia}`;
+                            btnOpt.onclick = function() {
+                                exibirPainelFamilia(grupo);
+                                multBox.style.display = 'none'; // Esconde a seleção após escolher
+                            };
+                            multOptions.appendChild(btnOpt);
                         });
-
-                        panel.style.display = 'block';
+                        multBox.style.display = 'block';
                     } else {
                         exibirMensagem("Nome não localizado na lista de convidados. Verifique se digitou corretamente ou consulte os noivos.", "#721c24", "#f8d7da", true);
                     }
@@ -476,6 +509,37 @@
                     btnBuscar.innerText = "BUSCAR CONVITE";
                     btnBuscar.disabled = false;
                 });
+        }
+
+        // Função isolada para desenhar e exibir os membros da família selecionada na tela
+        function exibirPainelFamilia(grupo) {
+            const panel = document.getElementById('family-panel');
+            const container = document.getElementById('family-members-container');
+            
+            container.innerHTML = '';
+            dadosGrupoAtual = grupo;
+            document.getElementById('family-title').innerText = grupo.familia;
+            
+            grupo.membros.forEach((membro, index) => {
+                const statusAnterior = membro.status || "Pendente";
+                const isNaoComparecer = (statusAnterior === 'Não Comparecer' || statusAnterior === 'Não Comparecerei');
+                
+                const row = document.createElement('div');
+                row.className = 'family-member-row';
+                row.innerHTML = `
+                    <span><strong>${membro.nome}</strong></span>
+                    <select id="member-status-${index}" style="width: auto; margin: 0; padding: 5px 10px; border-radius: 4px;">
+                        <option value="Pendente" ${statusAnterior === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                        <option value="Confirmado" ${statusAnterior === 'Confirmado' ? 'selected' : ''}>Confirmado</option>
+                        <option value="Não Comparecerei" ${isNaoComparecer ? 'selected' : ''}>Não poderei ir</option>
+                    </select>
+                `;
+                container.appendChild(row);
+            });
+
+            panel.style.display = 'block';
+            // Rola suavemente a tela até o formulário aparecer
+            panel.scrollIntoView({ behavior: 'smooth' });
         }
 
         function salvarPresenca() {
