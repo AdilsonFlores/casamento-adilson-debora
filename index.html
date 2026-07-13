@@ -174,6 +174,32 @@
             color: var(--verde-escuro);
         }
 
+        .listas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .lista-btn {
+            display: block;
+            background: var(--verde-claro);
+            border: 1px solid var(--verde-oliva);
+            color: var(--verde-escuro);
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .lista-btn:hover {
+            background: var(--verde-oliva);
+            color: var(--branco);
+            transform: translateY(-2px);
+        }
+
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -304,115 +330,6 @@
             border-top: 1px solid rgba(107, 124, 60, 0.2);
             margin-top: 60px;
         }
-
-        /* --- ESTILOS EXCLUSIVOS DA NOVA LISTA DE PRESENTES DINÂMICA --- */
-        .grid-presentes {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 25px;
-            margin-top: 25px;
-        }
-
-        .card-presente {
-            background: var(--branco);
-            border: 1px solid rgba(107, 124, 60, 0.15);
-            border-radius: 12px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(107, 124, 60, 0.03);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card-presente:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(107, 124, 60, 0.08);
-        }
-
-        .presente-imagem {
-            height: 80px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .presente-imagem img {
-            max-height: 100%;
-            max-width: 100%;
-            object-fit: contain;
-        }
-
-        .presente-nome {
-            font-size: 1.15rem;
-            font-weight: bold;
-            color: var(--verde-escuro);
-            margin-bottom: 8px;
-        }
-
-        .presente-descricao {
-            font-size: 0.85rem;
-            color: #555;
-            margin-bottom: 15px;
-            min-height: 38px;
-        }
-
-        .presente-valores {
-            font-size: 0.9rem;
-            color: var(--texto-escuro);
-            margin-bottom: 15px;
-            background: var(--verde-claro);
-            padding: 10px;
-            border-radius: 6px;
-        }
-
-        .progresso-container {
-            background: #e2e8f0;
-            border-radius: 10px;
-            height: 7px;
-            width: 100%;
-            margin-bottom: 8px;
-            overflow: hidden;
-        }
-
-        .progresso-barra {
-            height: 100%;
-            width: 0%;
-            border-radius: 10px;
-            transition: width 0.8s ease;
-        }
-
-        /* Cores das barras que combinam com o layout oliva */
-        .progresso-barra.baixo { background-color: #c5d4a4; }     /* Oliva suave */
-        .progresso-barra.medio { background-color: #dfc88a; }     /* Dourado suave */
-        .progresso-barra.concluido { background-color: var(--verde-escuro); } /* Verde Forte */
-
-        .texto-progresso {
-            font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 15px;
-        }
-
-        .presente-concluido-tag {
-            color: var(--verde-escuro);
-            font-weight: bold;
-            font-size: 0.85rem;
-            padding: 10px;
-            border: 1px dashed var(--verde-escuro);
-            border-radius: 6px;
-            background: var(--verde-claro);
-            display: block;
-        }
-
-        .loading-presentes {
-            font-style: italic;
-            color: var(--verde-oliva);
-            grid-column: 1 / -1;
-            padding: 30px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -464,13 +381,13 @@
             </div>
         </div>
 
-        <!-- Lista de Presentes (Agora Dinâmica e Integrada) -->
+        <!-- Lista de Presentes -->
         <div class="section">
             <h2>Lista de Presentes</h2>
-            <p style="text-align: center; margin-bottom: 20px;">Sua presença é o nosso maior presente! Caso deseje nos abençoar com algo a mais, escolha uma das cotas abaixo:</p>
-            
-            <div id="grid-presentes" class="grid-presentes">
-                <div class="loading-presentes">Carregando lista de presentes...</div>
+            <p style="text-align: center; margin-bottom: 20px;">Sua presença é o nosso maior presente! Caso deseje nos abençoar com algo a mais, preparamos as listas abaixo:</p>
+            <div class="listas-grid">
+                <a href="#" target="_blank" class="lista-btn">🎁 Lista de Presentes Virtual</a>
+                <a href="#" target="_blank" class="lista-btn">✈️ Cotas de Lua de Mel</a>
             </div>
         </div>
 
@@ -533,108 +450,6 @@
                 .trim();
         }
 
-        // ==========================================
-        // LÓGICA DE CARREGAMENTO DOS PRESENTES
-        // ==========================================
-        async function carregarPresentes() {
-            const grid = document.getElementById("grid-presentes");
-            if (!grid) return;
-
-            try {
-                // Requisição buscando o parâmetro do tipo presentes
-                const response = await fetch(`${urlWebhook}?tipo=presentes`);
-                const presentes = await response.json();
-
-                grid.innerHTML = "";
-
-                if (presentes.length === 0) {
-                    grid.innerHTML = "<p class='loading-presentes'>Nenhum presente ativo no momento.</p>";
-                    return;
-                }
-
-                presentes.forEach(item => {
-                    const valorCota = item.valor_cota;
-                    const totalCotas = valorCota > 0 ? Math.round(item.valor_total / valorCota) : 1;
-                    const cotasVendidas = item.cotas_vendidas || 0;
-
-                    const porcentagem = Math.min(100, Math.round((cotasVendidas / totalCotas) * 100));
-                    const finalizado = cotasVendidas >= totalCotas;
-
-                    // Ajustando as cores dinâmicas para combinarem com os tons de verde do seu casamento
-                    let classeCorBarra = "baixo";
-                    if (porcentagem > 40 && porcentagem < 100) {
-                        classeCorBarra = "medio";
-                    } else if (finalizado) {
-                        classeCorBarra = "concluido";
-                    }
-
-                    const totalFormatado = item.valor_total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                    const cotaFormatada = valorCota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-                    const card = document.createElement("div");
-                    card.className = "card-presente";
-
-                    // Usa o botão estilizado com a sua classe (.btn)
-                    const acaoBotao = finalizado
-                        ? `<span class="presente-concluido-tag">✓ Presente Concluído!</span>`
-                        : `<button class="btn" style="width: 100%; padding: 10px;" onclick="abrirModalContribuicao(${item.id}, '${item.nome}', ${item.valor_cota})">Presentear</button>`;
-
-                    card.innerHTML = `
-                        <div>
-                            <div class="presente-imagem">
-                                ${item.imagem ? `<img src="${item.imagem}" alt="${item.nome}">` : `
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--verde-oliva)" stroke-width="1.2">
-                                        <rect x="3" y="8" width="18" height="13" rx="2"/>
-                                        <path d="M12 8V3"/>
-                                        <path d="M12 3a2.5 2.5 0 0 1 2.5 2.5c0 1.5-2.5 2.5-2.5 2.5s-2.5-1-2.5-2.5A2.5 2.5 0 0 1 12 3z"/>
-                                        <path d="M3 12h18"/>
-                                    </svg>
-                                `}
-                            </div>
-                            
-                            <h3 class="presente-nome">${item.nome}</h3>
-                            <p class="presente-descricao">${item.descricao || ""}</p>
-                            
-                            <div class="presente-valores">
-                                <strong>Cota:</strong> ${cotaFormatada} <br>
-                                <small style="color: #666;">Total: ${totalFormatado}</small>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="progresso-container">
-                                <div class="progresso-barra ${classeCorBarra}" style="width: ${porcentagem}%"></div>
-                            </div>
-                            <div class="texto-progresso">
-                                ${cotasVendidas} de ${totalCotas} cotas (${porcentagem}%)
-                            </div>
-                            <div class="presente-acao">
-                                ${acaoBotao}
-                            </div>
-                        </div>
-                    `;
-
-                    grid.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error("Erro ao carregar os presentes:", error);
-                grid.innerHTML = "<p class='loading-presentes' style='color: #c53030;'>Erro ao carregar a lista de presentes. Tente recarregar a página.</p>";
-            }
-        }
-
-        // Função do clique no presente (substitua pelo seu checkout futuramente)
-        function abrirModalContribuicao(id, nome, valorCota) {
-            alert(`Você escolheu presentear com uma cota para:\n👉 ${nome}\n\nValor: R$ ${valorCota.toFixed(2).replace('.', ',')}\n\n(Pronto para integrar com o seu modal de pagamento!)`);
-        }
-
-        // Roda o carregamento dos presentes assim que o DOM abrir
-        document.addEventListener("DOMContentLoaded", carregarPresentes);
-
-
-        // ==========================================
-        // LÓGICA DE CONFIRMAÇÃO DE PRESENÇA (RSVP)
-        // ==========================================
         function buscarConvidado() {
             const campoBusca = document.getElementById('guest-search');
             const termoBusca = limparTexto(campoBusca.value);
@@ -659,14 +474,17 @@
             fetch(urlWebhook)
                 .then(response => response.json())
                 .then(listaConvidados => {
+                    // FILTRA todas as ocorrências encontradas na lista (em vez de parar no primeiro)
                     const resultados = listaConvidados.filter(c => {
                         const nomeCadastrado = limparTexto(c.buscaNome);
                         return nomeCadastrado.includes(termoBusca) || termoBusca.includes(nomeCadastrado);
                     });
 
                     if (resultados.length === 1) {
+                        // Se encontrou apenas uma família, abre ela direto na hora
                         exibirPainelFamilia(resultados[0]);
                     } else if (resultados.length > 1) {
+                        // Se houver mais de uma família com esse nome (Ex: múltiplos "Luis Felipe")
                         resultados.forEach(grupo => {
                             const btnOpt = document.createElement('button');
                             btnOpt.className = 'family-opt-btn';
@@ -674,7 +492,7 @@
                             btnOpt.innerText = `👨‍👩‍👧‍👦 ${grupo.familia}`;
                             btnOpt.onclick = function() {
                                 exibirPainelFamilia(grupo);
-                                multBox.style.display = 'none';
+                                multBox.style.display = 'none'; // Esconde a seleção após escolher
                             };
                             multOptions.appendChild(btnOpt);
                         });
@@ -693,6 +511,7 @@
                 });
         }
 
+        // Função isolada para desenhar e exibir os membros da família selecionada na tela
         function exibirPainelFamilia(grupo) {
             const panel = document.getElementById('family-panel');
             const container = document.getElementById('family-members-container');
@@ -719,6 +538,7 @@
             });
 
             panel.style.display = 'block';
+            // Rola suavemente a tela até o formulário aparecer
             panel.scrollIntoView({ behavior: 'smooth' });
         }
 
