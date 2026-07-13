@@ -1,601 +1,528 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Casamento de Adilson & Débora</title>
-    <style>
-        :root {
-            --verde-oliva: #6b7c3c;
-            --verde-escuro: #4a5729;
-            --verde-claro: #f1f4eb;
-            --texto-escuro: #2c3514;
-            --fundo-creme: #faf9f5;
-            --branco: #ffffff;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nosso Casamento</title>
+  <!-- Fonte elegante e minimalista -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- ESTILOS GERAIS (MINIMALISTAS) --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Georgia', serif;
-        }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: #333;
+      background-color: #fafafa;
+      line-height: 1.6;
+    }
 
-        body {
-            background-color: var(--fundo-creme);
-            color: var(--texto-escuro);
-            line-height: 1.6;
-        }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
 
-        header {
-            text-align: center;
-            padding: 60px 20px;
-            background-color: var(--verde-claro);
-            border-bottom: 3px solid var(--verde-oliva);
-        }
+    h2 {
+      font-size: 2rem;
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
 
-        .logo-box {
-            margin-bottom: 20px;
-        }
+    .subtitulo {
+      font-size: 1rem;
+      color: #777;
+      text-align: center;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
 
-        .logo-img {
-            max-width: 220px;
-            height: auto;
-            mix-blend-mode: multiply; 
-        }
+    section {
+      background: #ffffff;
+      border: 1px solid #eaeaea;
+      border-radius: 12px;
+      padding: 40px 30px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    }
 
-        h1 {
-            font-size: 2.8rem;
-            color: var(--verde-escuro);
-            margin-bottom: 10px;
-            font-weight: 400;
-            letter-spacing: 2px;
-        }
+    /* --- BOTÕES GERAIS --- */
+    .btn {
+      background: #111;
+      color: #fff;
+      border: 1px solid #111;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
 
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--verde-oliva);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 25px;
-        }
+    .btn:hover {
+      background: #444;
+      border-color: #444;
+    }
 
-        .save-the-date {
-            font-size: 1.4rem;
-            color: var(--branco);
-            background-color: var(--verde-oliva);
-            font-weight: bold;
-            display: inline-block;
-            padding: 8px 30px;
-            border-radius: 30px;
-            letter-spacing: 1px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+    /* --- SEÇÃO 1: RSVP (CONFIRMAÇÃO) --- */
+    .busca-box {
+      max-width: 500px;
+      margin: 0 auto 30px auto;
+      display: flex;
+      gap: 10px;
+    }
 
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+    .input-text {
+      flex: 1;
+      padding: 12px 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
 
-        .section {
-            background: var(--branco);
-            padding: 40px;
-            margin-bottom: 35px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(107, 124, 60, 0.06);
-            border-top: 4px solid var(--verde-oliva);
-        }
+    .input-text:focus {
+      outline: none;
+      border-color: #111;
+    }
 
-        h2 {
-            color: var(--verde-escuro);
-            margin-bottom: 25px;
-            font-size: 1.8rem;
-            font-weight: 400;
-            letter-spacing: 1px;
-            text-align: center;
-        }
+    .membros-lista {
+      max-width: 600px;
+      margin: 30px auto;
+      text-align: left;
+    }
 
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
-        }
+    .familia-titulo {
+      font-weight: 600;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    }
 
-        .detail-card {
-            background: var(--verde-claro);
-            padding: 25px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid rgba(107, 124, 60, 0.15);
-        }
+    .membro-linha {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px dotted #eee;
+    }
 
-        .detail-card h3 {
-            color: var(--verde-escuro);
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
+    .opcoes-status {
+      display: flex;
+      gap: 10px;
+    }
 
-        .capela-img-container {
-            width: 100%;
-            height: 220px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid var(--verde-oliva);
-        }
+    .opcoes-status label {
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
 
-        .capela-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .opcoes-status input[type="radio"] {
+      display: none;
+    }
 
-        .traje-img-container {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
+    /* Estilos dinâmicos para quando o rádio for selecionado */
+    .opcoes-status input[type="radio"]:checked + .lbl-confirmado {
+      background-color: #e2ece9;
+      border-color: #2f4f4f;
+      color: #2f4f4f;
+      font-weight: 600;
+    }
 
-        .traje-img {
-            width: 48%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 6px;
-            border: 1px solid rgba(107, 124, 60, 0.2);
-            background-color: var(--branco);
-        }
+    .opcoes-status input[type="radio"]:checked + .lbl-recusado {
+      background-color: #fce8e6;
+      border-color: #c53030;
+      color: #c53030;
+      font-weight: 600;
+    }
 
-        .traje-text {
-            text-align: left;
-            font-size: 0.9rem;
-            color: #444;
-            margin-top: 10px;
-        }
+    /* --- SEÇÃO 2: LISTA DE PRESENTES --- */
+    .grid-presentes {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 30px;
+      justify-content: center;
+      margin-top: 20px;
+    }
 
-        .traje-text ul {
-            margin-left: 15px;
-            margin-top: 5px;
-        }
+    .card-presente {
+      background: #fff;
+      border: 1px solid #eaeaea;
+      border-radius: 12px;
+      padding: 24px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+    }
 
-        .maps-link {
-            display: inline-block;
-            margin-top: 12px;
-            color: var(--verde-oliva);
-            font-weight: bold;
-            text-decoration: none;
-            border-bottom: 1px dashed var(--verde-oliva);
-            transition: color 0.3s;
-        }
+    .card-presente:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    }
 
-        .maps-link:hover {
-            color: var(--verde-escuro);
-        }
+    .presente-imagem {
+      height: 80px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .presente-imagem img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+    }
 
-        .listas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
+    /* Ícone SVG padrão (Line art) se não houver imagem cadastrada */
+    .presente-imagem svg {
+      stroke: #333;
+    }
 
-        .lista-btn {
-            display: block;
-            background: var(--verde-claro);
-            border: 1px solid var(--verde-oliva);
-            color: var(--verde-escuro);
-            padding: 15px;
-            text-align: center;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
+    .presente-nome {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #111;
+      margin: 10px 0 5px 0;
+    }
 
-        .lista-btn:hover {
-            background: var(--verde-oliva);
-            color: var(--branco);
-            transform: translateY(-2px);
-        }
+    .presente-descricao {
+      font-size: 0.85rem;
+      color: #777;
+      margin-bottom: 15px;
+      min-height: 38px;
+    }
 
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
+    .presente-valores {
+      font-size: 0.9rem;
+      color: #333;
+      margin-bottom: 15px;
+    }
 
-        .gallery-img {
-            width: 100%;
-            height: 280px;
-            object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid rgba(107, 124, 60, 0.1);
-        }
+    /* Barra de Progresso das Cotas */
+    .progresso-container {
+      background: #f0f0f0;
+      border-radius: 10px;
+      height: 6px;
+      width: 100%;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
 
-        .search-box {
-            background: var(--verde-claro);
-            padding: 25px;
-            border: 1px solid rgba(107, 124, 60, 0.2);
-            border-radius: 8px;
-            margin-bottom: 25px;
-        }
+    .progresso-barra {
+      height: 100%;
+      width: 0%;
+      border-radius: 10px;
+      transition: width 0.8s ease;
+    }
 
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: var(--verde-escuro);
-        }
+    /* Cores das barras */
+    .progresso-barra.baixo { background-color: #c3d1be; }     /* Verde Claro */
+    .progresso-barra.medio { background-color: #dfc88a; }     /* Dourado */
+    .progresso-barra.concluido { background-color: #2f4f4f; }  /* Slate/Verde Escuro */
 
-        input[type="text"], select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #c3cbd0;
-            border-radius: 6px;
-            font-size: 1rem;
-            margin-bottom: 15px;
-            background-color: var(--branco);
-        }
+    .texto-progresso {
+      font-size: 0.8rem;
+      color: #666;
+      margin-bottom: 15px;
+    }
 
-        .btn {
-            background-color: var(--verde-oliva);
-            color: var(--branco);
-            padding: 14px 28px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            width: 100%;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
+    /* Estado de Item Concluído */
+    .presente-concluido-tag {
+      color: #2f4f4f;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 10px;
+      border: 1px solid #2f4f4f;
+      border-radius: 6px;
+      background: #f4f7f6;
+      display: block;
+    }
 
-        .btn:disabled {
-            background-color: #a0a88b;
-            cursor: not-allowed;
-        }
-
-        /* Seletor de múltiplas famílias */
-        .family-selector-box {
-            background: #fdfdfd;
-            border: 2px dashed var(--verde-oliva);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .family-opt-btn {
-            background: var(--verde-claro);
-            color: var(--verde-escuro);
-            border: 1px solid var(--verde-oliva);
-            padding: 12px;
-            margin: 8px 0;
-            width: 100%;
-            border-radius: 6px;
-            cursor: pointer;
-            text-align: left;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-
-        .family-opt-btn:hover {
-            background: var(--verde-oliva);
-            color: #fff;
-        }
-
-        .rsvp-family-list {
-            margin-top: 25px;
-            background: var(--verde-claro);
-            padding: 25px;
-            border-radius: 8px;
-            border: 1px solid rgba(107, 124, 60, 0.2);
-            display: none;
-        }
-
-        .family-member-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(107, 124, 60, 0.15);
-        }
-
-        .family-member-row:last-child {
-            border-bottom: none;
-        }
-
-        .message-box {
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 6px;
-            display: none;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--verde-oliva);
-            font-size: 0.9rem;
-            background: var(--verde-claro);
-            border-top: 1px solid rgba(107, 124, 60, 0.2);
-            margin-top: 60px;
-        }
-    </style>
+    .loading {
+      font-style: italic;
+      color: #999;
+      grid-column: 1 / -1;
+      padding: 40px 0;
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo-box">
-            <img class="logo-img" src="Imagens/Logo.jfif" alt="Logo Adilson & Débora">
-        </div>
-        <h1>Adilson & Débora</h1>
-        <p class="subtitle">Nosso Casamento</p>
-        <span class="save-the-date">07 . 11 . 2026</span>
-    </header>
+  <div class="container">
 
-    <div class="container">
+    <!-- ========================================== -->
+    <!-- SEÇÃO 1: RSVP (CONFIRMAÇÃO DE PRESENÇA)    -->
+    <!-- ========================================== -->
+    <section id="rsvp">
+      <h2>Confirmar Presença</h2>
+      <p class="subtitulo">Digite seu nome completo para localizar sua família e confirmar sua presença.</p>
+      
+      <div class="busca-box">
+        <input type="text" id="input-busca" class="input-text" placeholder="Ex: Maria Souza">
+        <button class="btn" onclick="buscarFamilia()">Buscar</button>
+      </div>
+
+      <!-- Onde a lista de membros aparecerá após a busca -->
+      <div id="rsvp-resultado" class="membros-lista"></div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SEÇÃO 2: LISTA DE PRESENTES                -->
+    <!-- ========================================== -->
+    <section id="presentes">
+      <h2>Lista de Presentes</h2>
+      <p class="subtitulo">Sua presença é nosso maior presente! Mas se desejar nos abençoar, escolha uma cota abaixo.</p>
+      
+      <div id="grid-presentes" class="grid-presentes">
+        <div class="loading">Carregando presentes...</div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- --- JAVASCRIPT DE INTEGRAÇÃO --- -->
+  <script>
+    // URL ÚNICA do seu Google Apps Script (Web App)
+    const URL_API = "https://script.google.com/macros/s/AKfycbyFWvs29R7VWbTlGAZu8ZJZqxnca7nPocyaFXxDQN0oJXNAYTmCM9wIGq754NGWtR2aiw/exec";
+    
+    let familiaEncontrada = null; // Guardará temporariamente a família buscada
+
+    // ==========================================
+    // LÓGICA DO RSVP (BUSCA E ENVIO)
+    // ==========================================
+    async function buscarFamilia() {
+      const nomeBusca = document.getElementById("input-busca").value.toLowerCase().trim();
+      const resultadoDiv = document.getElementById("rsvp-resultado");
+      
+      if (!nomeBusca) {
+        alert("Por favor, digite um nome para buscar.");
+        return;
+      }
+
+      resultadoDiv.innerHTML = "<p class='loading'>Buscando convite...</p>";
+
+      try {
+        // Busca a lista padrão de convidados
+        const response = await fetch(URL_API);
+        const listaFamilias = await response.json();
+
+        // Procura a família que contém o nome digitado
+        familiaEncontrada = listaFamilias.find(f => f.buscaNome.includes(nomeBusca));
+
+        if (!familiaEncontrada) {
+          resultadoDiv.innerHTML = "<p style='color: #c53030; text-align: center;'>Não encontramos nenhum convite com esse nome. Verifique a grafia ou tente com outro membro da família.</p>";
+          return;
+        }
+
+        // Renderiza o formulário com os membros da família encontrada
+        let html = `<p class="familia-titulo">Família: ${familiaEncontrada.familia}</p>`;
         
-        <!-- O Grande Dia -->
-        <div class="section">
-            <h2>O Grande Dia</h2>
-            <div class="details-grid">
-                <div class="detail-card">
-                    <div class="capela-img-container">
-                        <img class="capela-img" src="Imagens/Capela.jfif" alt="Capela Nossa Senhora das Graças">
-                    </div>
-                    <h3>Cerimônia</h3>
-                    <p><strong>Capela Nossa Senhora das Graças</strong></p>
-                    <p>Botafogo, Rio de Janeiro - RJ</p>
-                    <p><strong>Horário:</strong> 17:30h</p>
-                    <a href="https://maps.google.com/?q=Capela+Nossa+Senhora+das+Gracas+Botafogo+Rio+de+Janeiro" target="_blank" class="maps-link">📍 Abrir no Google Maps</a>
-                </div>
-                
-                <!-- Card de Traje -->
-                <div class="detail-card">
-                    <div class="traje-img-container">
-                        <img class="traje-img" src="Imagens/Traje Feminino.jfif" alt="Referência Traje Feminino">
-                        <img class="traje-img" src="Imagens/Traje Masculino.jfif" alt="Referência Traje Masculino">
-                    </div>
-                    <h3>Traje</h3>
-                    <p style="font-size: 1.1rem; margin-bottom: 5px;"><strong>Esporte Fino</strong></p>
-                    
-                    <div class="traje-text">
-                        <p>Queremos que todos se sintam confortáveis para comemorar conosco! Sugerimos um estilo arrumado, mas sem complicações:</p>
-                        <ul>
-                            <li><strong>Para eles:</strong> Camisa de botão (manga longa ou curta) e calça comprida (sarja, social ou jeans escuro). <em style="color: var(--verde-escuro);">Não é necessário usar terno nem gravata!</em></li>
-                            <li><strong>Para elas:</strong> Vestidos leves (curtos ou midis), saias com blusas elegantes ou macacões confortáveis.</li>
-                        </ul>
-                        <p style="font-size: 0.85rem; color: var(--verde-oliva); margin-top: 12px; font-style: italic; text-align: center;">Obs: Pedimos a gentileza de deixar os tons de branco e verde oliva exclusivamente para o altar.</p>
-                    </div>
-                </div>
+        familiaEncontrada.membros.forEach((membro, index) => {
+          const isConfirmado = membro.status === "Confirmado";
+          const isRecusado = membro.status === "Recusado";
+
+          html += `
+            <div class="membro-linha">
+              <span>${membro.nome}</span>
+              <div class="opcoes-status">
+                <input type="radio" name="membro_${index}" id="membro_${index}_sim" value="Confirmado" ${isConfirmado ? 'checked' : ''}>
+                <label for="membro_${index}_sim" class="lbl-confirmado">Vou</label>
+
+                <input type="radio" name="membro_${index}" id="membro_${index}_nao" value="Recusado" ${isRecusado ? 'checked' : ''}>
+                <label for="membro_${index}_nao" class="lbl-recusado">Não vou</label>
+              </div>
             </div>
-        </div>
+          `;
+        });
 
-        <!-- Lista de Presentes -->
-        <div class="section">
-            <h2>Lista de Presentes</h2>
-            <p style="text-align: center; margin-bottom: 20px;">Sua presença é o nosso maior presente! Caso deseje nos abençoar com algo a mais, preparamos as listas abaixo:</p>
-            <div class="listas-grid">
-                <a href="#" target="_blank" class="lista-btn">🎁 Lista de Presentes Virtual</a>
-                <a href="#" target="_blank" class="lista-btn">✈️ Cotas de Lua de Mel</a>
-            </div>
-        </div>
+        html += `
+          <div style="text-align: center; margin-top: 25px;">
+            <button class="btn" onclick="salvarRsvp()">Enviar Confirmação</button>
+          </div>
+        `;
 
-        <!-- Momentos Juntos (Galeria) -->
-        <div class="section">
-            <h2>Momentos Juntos</h2>
-            <div class="gallery">
-                <img class="gallery-img" src="Imagens/Foto Casal 1.jpg" alt="Foto do Casal 1">
-                <img class="gallery-img" src="Imagens/Foto Casal 2.jpg" alt="Foto do Casal 2">
-                <img class="gallery-img" src="Imagens/Foto Casal 3.jpg" alt="Foto do Casal 3">
-            </div>
-        </div>
+        resultadoDiv.innerHTML = html;
 
-        <!-- RSVP -->
-        <div class="section" id="rsvp">
-            <h2>Confirmação de Presença</h2>
-            <p style="margin-bottom: 20px; text-align: center;">Por favor, digite seu nome completo para localizar seu convite e confirmar a presença da sua família.</p>
-            
-            <div class="search-box">
-                <label for="guest-search">Nome do Convidado Principal:</label>
-                <input type="text" id="guest-search" placeholder="Ex: Adilson Silva, Maria Souza...">
-                <button type="button" id="btn-buscar" class="btn" onclick="buscarConvidado()">Buscar Convite</button>
-            </div>
+      } catch (error) {
+        console.error(error);
+        resultadoDiv.innerHTML = "<p style='color: red; text-align: center;'>Erro ao conectar com o servidor. Tente novamente.</p>";
+      }
+    }
 
-            <!-- Caixa de Seleção de Múltiplas Famílias Homônimas -->
-            <div id="multiple-families-box" class="family-selector-box">
-                <p style="font-weight: bold; margin-bottom: 10px; color: var(--verde-escuro);">Encontramos mais de um convite com este nome. Por favor, clique no seu grupo familiar:</p>
-                <div id="multiple-families-options"></div>
-            </div>
+    async function salvarRsvp() {
+      if (!familiaEncontrada) return;
 
-            <div id="message-container" class="message-box"></div>
+      const resultadoDiv = document.getElementById("rsvp-resultado");
+      
+      // Atualiza os status dos membros com base no que foi marcado na tela
+      const membrosAtualizados = familiaEncontrada.membros.map((membro, index) => {
+        const radios = document.getElementsByName(`membro_${index}`);
+        let statusSelecionado = "Pendente";
 
-            <div id="family-panel" class="rsvp-family-list">
-                <h3 style="color: var(--verde-escuro); margin-bottom: 15px;" id="family-title">Família Encontrada</h3>
-                <p style="font-size: 0.9rem; margin-bottom: 15px; color: var(--verde-oliva);">Selecione a opção para cada membro do seu grupo familiar:</p>
-                
-                <form id="rsvp-form">
-                    <div id="family-members-container"></div>
-                    <button type="button" id="btn-salvar" class="btn" style="margin-top: 20px;" onclick="salvarPresenca()">Confirmar Presença</button>
-                </form>
-            </div>
-        </div>
-
-    </div>
-
-    <footer>
-        <p>© 2026 Casamento Adilson & Débora. Todos os direitos reservados.</p>
-    </footer>
-
-    <script>
-        const urlWebhook = "https://script.google.com/macros/s/AKfycbyFWvs29R7VWbTlGAZu8ZJZqxnca7nPocyaFXxDQN0oJXNAYTmCM9wIGq754NGWtR2aiw/exec";
-
-        let dadosGrupoAtual = null;
-
-        function limparTexto(texto) {
-            return texto
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .toLowerCase()
-                .trim();
+        for (let r of radios) {
+          if (r.checked) {
+            statusSelecionado = r.value;
+          }
         }
 
-        function buscarConvidado() {
-            const campoBusca = document.getElementById('guest-search');
-            const termoBusca = limparTexto(campoBusca.value);
-            const btnBuscar = document.getElementById('btn-buscar');
-            const panel = document.getElementById('family-panel');
-            const multBox = document.getElementById('multiple-families-box');
-            const multOptions = document.getElementById('multiple-families-options');
-            
-            exibirMensagem("", "", "", false); 
-            panel.style.display = 'none';
-            multBox.style.display = 'none';
-            multOptions.innerHTML = '';
+        return {
+          nome: membro.nome,
+          status: statusSelecionado
+        };
+      });
 
-            if (!termoBusca) {
-                exibirMensagem("Por favor, digite um nome para pesquisar.", "#721c24", "#f8d7da", true);
-                return;
-            }
+      // Se nenhum membro foi alterado, avisa o usuário
+      const todosPendentes = membrosAtualizados.every(m => m.status === "Pendente");
+      if (todosPendentes) {
+        alert("Por favor, marque 'Vou' ou 'Não vou' para pelo menos uma pessoa.");
+        return;
+      }
 
-            btnBuscar.innerText = "BUSCANDO...";
-            btnBuscar.disabled = true;
+      resultadoDiv.innerHTML = "<p class='loading'>Salvando suas respostas na lista oficial...</p>";
 
-            fetch(urlWebhook)
-                .then(response => response.json())
-                .then(listaConvidados => {
-                    // FILTRA todas as ocorrências encontradas na lista (em vez de parar no primeiro)
-                    const resultados = listaConvidados.filter(c => {
-                        const nomeCadastrado = limparTexto(c.buscaNome);
-                        return nomeCadastrado.includes(termoBusca) || termoBusca.includes(nomeCadastrado);
-                    });
+      // Envia os dados de volta para o doPost do Google Sheets
+      try {
+        const response = await fetch(URL_API, {
+          method: "POST",
+          body: JSON.stringify({
+            familia: familiaEncontrada.familia,
+            membros: membrosAtualizados
+          })
+        });
 
-                    if (resultados.length === 1) {
-                        // Se encontrou apenas uma família, abre ela direto na hora
-                        exibirPainelFamilia(resultados[0]);
-                    } else if (resultados.length > 1) {
-                        // Se houver mais de uma família com esse nome (Ex: múltiplos "Luis Felipe")
-                        resultados.forEach(grupo => {
-                            const btnOpt = document.createElement('button');
-                            btnOpt.className = 'family-opt-btn';
-                            btnOpt.type = 'button';
-                            btnOpt.innerText = `👨‍👩‍👧‍👦 ${grupo.familia}`;
-                            btnOpt.onclick = function() {
-                                exibirPainelFamilia(grupo);
-                                multBox.style.display = 'none'; // Esconde a seleção após escolher
-                            };
-                            multOptions.appendChild(btnOpt);
-                        });
-                        multBox.style.display = 'block';
-                    } else {
-                        exibirMensagem("Nome não localizado na lista de convidados. Verifique se digitou corretamente ou consulte os noivos.", "#721c24", "#f8d7da", true);
-                    }
-                })
-                .catch(err => {
-                    console.error("Erro ao ler dados da planilha:", err);
-                    exibirMensagem("Houve uma falha ao conectar com a planilha. Verifique a internet e tente novamente.", "#721c24", "#f8d7da", true);
-                })
-                .finally(() => {
-                    btnBuscar.innerText = "BUSCAR CONVITE";
-                    btnBuscar.disabled = false;
-                });
+        const res = await response.json();
+
+        if (res.result === "success") {
+          resultadoDiv.innerHTML = "<p style='color: #2f4f4f; font-weight: 600; text-align: center; font-size: 1.1rem; padding: 20px;'>✓ Presença atualizada com sucesso! Obrigado.</p>";
+        } else {
+          throw new Error();
+        }
+      } catch (error) {
+        alert("Erro ao salvar. Tente novamente.");
+        buscarFamilia(); // Recarrega a busca
+      }
+    }
+
+
+    // ==========================================
+    // LÓGICA DA LISTA DE PRESENTES (BUSCA E CARD)
+    // ==========================================
+    async function carregarPresentes() {
+      const grid = document.getElementById("grid-presentes");
+      
+      try {
+        // Envia o parâmetro para buscar exclusivamente os presentes
+        const response = await fetch(`${URL_API}?tipo=presentes`);
+        const presentes = await response.json();
+        
+        grid.innerHTML = "";
+
+        if (presentes.length === 0) {
+          grid.innerHTML = "<p class='loading'>Nenhum presente ativo no momento.</p>";
+          return;
         }
 
-        // Função isolada para desenhar e exibir os membros da família selecionada na tela
-        function exibirPainelFamilia(grupo) {
-            const panel = document.getElementById('family-panel');
-            const container = document.getElementById('family-members-container');
-            
-            container.innerHTML = '';
-            dadosGrupoAtual = grupo;
-            document.getElementById('family-title').innerText = grupo.familia;
-            
-            grupo.membros.forEach((membro, index) => {
-                const statusAnterior = membro.status || "Pendente";
-                const isNaoComparecer = (statusAnterior === 'Não Comparecer' || statusAnterior === 'Não Comparecerei');
-                
-                const row = document.createElement('div');
-                row.className = 'family-member-row';
-                row.innerHTML = `
-                    <span><strong>${membro.nome}</strong></span>
-                    <select id="member-status-${index}" style="width: auto; margin: 0; padding: 5px 10px; border-radius: 4px;">
-                        <option value="Pendente" ${statusAnterior === 'Pendente' ? 'selected' : ''}>Pendente</option>
-                        <option value="Confirmado" ${statusAnterior === 'Confirmado' ? 'selected' : ''}>Confirmado</option>
-                        <option value="Não Comparecerei" ${isNaoComparecer ? 'selected' : ''}>Não poderei ir</option>
-                    </select>
-                `;
-                container.appendChild(row);
-            });
+        presentes.forEach(item => {
+          const valorCota = item.valor_cota;
+          const totalCotas = valorCota > 0 ? Math.round(item.valor_total / valorCota) : 1;
+          const cotasVendidas = item.cotas_vendidas || 0;
+          
+          const porcentagem = Math.min(100, Math.round((cotasVendidas / totalCotas) * 100));
+          const finalizado = cotasVendidas >= totalCotas;
 
-            panel.style.display = 'block';
-            // Rola suavemente a tela até o formulário aparecer
-            panel.scrollIntoView({ behavior: 'smooth' });
-        }
+          // Define a cor da barra baseada no avanço
+          let classeCorBarra = "baixo";
+          if (porcentagem > 40 && porcentagem < 100) {
+            classeCorBarra = "medio";
+          } else if (finalizado) {
+            classeCorBarra = "concluido";
+          }
 
-        function salvarPresenca() {
-            if (!dadosGrupoAtual) return;
+          // Formatação dos preços
+          const totalFormatado = item.valor_total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          const cotaFormatada = valorCota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-            const btnSalvar = document.getElementById('btn-salvar');
-            const textoOriginal = btnSalvar.innerText;
-            btnSalvar.innerText = "A ENVIAR...";
-            btnSalvar.disabled = true;
+          const card = document.createElement("div");
+          card.className = "card-presente";
 
-            const respostasMembros = dadosGrupoAtual.membros.map((membro, index) => {
-                const statusSelecionado = document.getElementById(`member-status-${index}`).value;
-                return {
-                    nome: membro.nome,
-                    status: statusSelecionado
-                };
-            });
+          // Define o botão ou texto de finalizado
+          const acaoBotao = finalizado 
+            ? `<span class="presente-concluido-tag">✓ Presente Concluído!</span>`
+            : `<button class="btn" style="width: 100%;" onclick="abrirModalContribuicao(${item.id}, '${item.nome}', ${item.valor_cota})">Presentear</button>`;
 
-            const dadosParaEnviar = {
-                familia: dadosGrupoAtual.familia,
-                membros: respostasMembros
-            };
+          card.innerHTML = `
+            <div>
+              <!-- Imagem do presente ou SVG minimalista padrão -->
+              <div class="presente-imagem">
+                ${item.imagem ? `<img src="${item.imagem}" alt="${item.nome}">` : `
+                  <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="8" width="18" height="13" rx="2"/>
+                    <path d="M12 8V3"/>
+                    <path d="M12 3a2.5 2.5 0 0 1 2.5 2.5c0 1.5-2.5 2.5-2.5 2.5s-2.5-1-2.5-2.5A2.5 2.5 0 0 1 12 3z"/>
+                    <path d="M3 12h18"/>
+                  </svg>
+                `}
+              </div>
+              
+              <h3 class="presente-nome">${item.nome}</h3>
+              <p class="presente-descricao">${item.descricao || ""}</p>
+              
+              <div class="presente-valores">
+                <strong>Valor da cota:</strong> ${cotaFormatada} <br>
+                <small style="color: #888;">Total do item: ${totalFormatado}</small>
+              </div>
+            </div>
 
-            fetch(urlWebhook, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(dadosParaEnviar)
-            })
-            .then(() => {
-                exibirMensagem("Confirmação atualizada com sucesso! Muito obrigado.", "#155724", "#d4edda", true);
-                document.getElementById('family-panel').style.display = 'none';
-                document.getElementById('guest-search').value = '';
-                dadosGrupoAtual = null;
-            })
-            .catch(error => {
-                console.error("Erro ao enviar confirmação:", error);
-                exibirMensagem("Houve uma falha de comunicação ao salvar os dados. Por favor, tente novamente.", "#721c24", "#f8d7da", true);
-            })
-            .finally(() => {
-                btnSalvar.innerText = textoOriginal;
-                btnSalvar.disabled = false;
-            });
-        }
+            <div>
+              <!-- Progresso das Cotas -->
+              <div class="progresso-container">
+                <div class="progresso-barra ${classeCorBarra}" style="width: ${porcentagem}%"></div>
+              </div>
+              <div class="texto-progresso">
+                ${cotasVendidas} de ${totalCotas} cotas (${porcentagem}%)
+              </div>
+              
+              <div class="presente-acao">
+                ${acaoBotao}
+              </div>
+            </div>
+          `;
 
-        function exibirMensagem(texto, corTexto, colBg, mostrar) {
-            const msgBox = document.getElementById('message-container');
-            if (mostrar) {
-                msgBox.innerText = texto;
-                msgBox.style.color = corTexto;
-                msgBox.style.backgroundColor = colBg;
-                msgBox.style.display = 'block';
-            } else {
-                msgBox.style.display = 'none';
-            }
-        }
-    </script>
+          grid.appendChild(card);
+        });
+
+      } catch (error) {
+        console.error("Erro ao obter presentes:", error);
+        grid.innerHTML = "<p class='loading' style='color: red;'>Erro ao carregar lista de presentes.</p>";
+      }
+    }
+
+    // Função de ação ao clicar no presente
+    function abrirModalContribuicao(id, nome, valorCota) {
+      alert(`Você escolheu presentear com uma cota para:\n👉 ${nome}\n\nValor da contribuição: R$ ${valorCota.toFixed(2).replace('.', ',')}\n\n(Aqui você poderá colocar o seu modal de Pix Copia e Cola ou Checkout de preferência!)`);
+    }
+
+    // Carrega a lista de presentes automaticamente quando o site abrir
+    document.addEventListener("DOMContentLoaded", carregarPresentes);
+  </script>
+
 </body>
 </html>
