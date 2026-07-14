@@ -305,9 +305,7 @@
             margin-top: 60px;
         }
 
-        /* ==========================================
-           SISTEMA DE ABAS (TABS) PARA RSVP / PRESENTES
-           ========================================== */
+        /* Sistema de Abas */
         .tabs-container {
             display: flex;
             justify-content: center;
@@ -346,9 +344,7 @@
             display: block;
         }
 
-        /* ==========================================
-           DIVISÃO POR TEMAS E SEUS CARDS DE PRODUTOS
-           ========================================== */
+        /* Divisão por Temas e Cards de Produtos */
         .tema-section {
             margin-top: 40px;
             margin-bottom: 20px;
@@ -504,7 +500,7 @@
             </div>
         </div>
 
-        <!-- Seção Interativa: RSVP por padrão e Aba de Presentes Alternável -->
+        <!-- Seção Interativa -->
         <div class="section" id="interacao-convidados">
             
             <!-- Menu das Abas -->
@@ -513,7 +509,7 @@
                 <button class="tab-btn" onclick="switchTab('presentes-panel', this)">Lista de Presentes</button>
             </div>
 
-            <!-- Painel 1: RSVP (Ativo por Padrão) -->
+            <!-- Painel 1: RSVP -->
             <div id="rsvp-panel" class="tab-content active">
                 <p style="margin-bottom: 20px; text-align: center;">Por favor, digite seu nome completo para localizar seu convite e confirmar a presença da sua família.</p>
                 
@@ -523,7 +519,6 @@
                     <button type="button" id="btn-buscar" class="btn" onclick="buscarConvidado()">Buscar Convite</button>
                 </div>
 
-                <!-- Caixa de Seleção de Múltiplas Famílias Homônimas -->
                 <div id="multiple-families-box" class="family-selector-box">
                     <p style="font-weight: bold; margin-bottom: 10px; color: var(--verde-escuro);">Encontramos mais de um convite com este nome. Por favor, clique no seu grupo familiar:</p>
                     <div id="multiple-families-options"></div>
@@ -542,13 +537,12 @@
                 </div>
             </div>
 
-            <!-- Painel 2: Presentes (Organizado por Temas) -->
+            <!-- Painel 2: Presentes -->
             <div id="presentes-panel" class="tab-content">
                 <p style="text-align: center; margin-bottom: 30px;">Sua presença é o nosso maior presente! Caso deseje nos abençoar com algo a mais, escolha um item da nossa lista abaixo:</p>
                 
                 <div id="loading-presentes" class="loading-gifts" style="display: none;">Carregando opções de presentes...</div>
                 
-                <!-- Onde as Seções de Temas com seus respectivos Cards serão geradas -->
                 <div id="lista-presentes-categorias"></div>
             </div>
 
@@ -561,6 +555,7 @@
     </footer>
 
     <script>
+        // SEU LINK DO WEBHOOK DO GOOGLE APPS SCRIPT
         const urlWebhook = "https://script.google.com/macros/s/AKfycbyFWvs29R7VWbTlGAZu8ZJZqxnca7nPocyaFXxDQN0oJXNAYTmCM9wIGq754NGWtR2aiw/exec";
 
         let dadosGrupoAtual = null;
@@ -582,115 +577,128 @@
             }
         }
 
-        // Função para buscar e organizar os presentes por temas de forma robusta
+        // Carrega, processa e divide por categoria os presentes
         function carregarPresentesDaPlanilha() {
-    const loading = document.getElementById('loading-presentes');
-    const containerCategorias = document.getElementById('lista-presentes-categorias');
-    
-    loading.style.display = 'block';
-    containerCategorias.innerHTML = '';
+            const loading = document.getElementById('loading-presentes');
+            const containerCategorias = document.getElementById('lista-presentes-categorias');
+            
+            loading.style.display = 'block';
+            containerCategorias.innerHTML = '';
 
-    // Chamando com a URL sincronizada com o seu Apps Script (?tipo=presentes)
-    fetch(`${urlWebhook}?tipo=presentes`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Erro HTTP! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(produtos => {
-            loading.style.display = 'none';
-            presentesCarregados = true;
-
-            if (!produtos || !Array.isArray(produtos) || produtos.length === 0) {
-                containerCategorias.innerHTML = '<p style="text-align: center; color: #777; width: 100%;">Nenhum presente disponível no momento.</p>';
-                return;
-            }
-
-            // Agrupando os presentes pela chave "categoria" definida no seu Apps Script
-            const presentesAgrupados = {};
-
-            produtos.forEach(prod => {
-                const nomeValido = prod.nome;
-                if (!nomeValido) return; 
-
-                // Agrupa por categoria. Se não houver, define como "Outros"
-                const temaValido = prod.categoria || 'Outros Presentes';
-
-                if (!presentesAgrupados[temaValido]) {
-                    presentesAgrupados[temaValido] = [];
-                }
-
-                presentesAgrupados[temaValido].push(prod);
-            });
-
-            // Geração das seções por Categoria e seus respectivos Cards
-            for (const tema in presentesAgrupados) {
-                const temaDiv = document.createElement('div');
-                temaDiv.className = 'tema-section';
-
-                const titulo = document.createElement('h3');
-                titulo.className = 'tema-titulo';
-                titulo.innerText = tema;
-                temaDiv.appendChild(titulo);
-
-                const grid = document.createElement('div');
-                grid.className = 'produtos-grid';
-
-                presentesAgrupados[tema].forEach(prod => {
-                    const card = document.createElement('div');
-                    card.className = 'produto-card';
-
-                    // Tratamento do Preço: se houver valor de cota, exibe ele; senão, o valor total.
-                    const precoExibir = prod.valor_cota > 0 ? prod.valor_cota : prod.valor_total;
-                    const precoFormatado = isNaN(precoExibir) || precoExibir <= 0 
-                        ? 'Cota Livre' 
-                        : `R$ ${precoExibir.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-
-                    // Tratamento de Status (Cotas Esgotadas ou Disponível)
-                    // Se o total de cotas vendidas atingir o valor total (em caso de cotas fixas)
-                    let isDisponivel = true;
-                    let statusTexto = 'Disponível';
-                    let statusCor = 'var(--verde-oliva)';
-
-                    if (prod.valor_cota > 0 && prod.valor_total > 0) {
-                        const maxCotas = Math.round(prod.valor_total / prod.valor_cota);
-                        if (prod.cotas_vendidas >= maxCotas) {
-                            isDisponivel = false;
-                            statusTexto = 'Esgotado';
-                            statusCor = '#c0392b';
-                        } else if (prod.cotas_vendidas > 0) {
-                            statusTexto = `${prod.cotas_vendidas} cota(s) comprada(s)`;
-                        }
+            // Sincronizado com e.parameter.tipo do seu script
+            fetch(`${urlWebhook}?tipo=presentes`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`O servidor retornou um status inválido HTTP: ${response.status}`);
+                    }
+                    return response.text(); // lê como texto para depurar caso retorne erro HTML do Google
+                })
+                .then(textoBruto => {
+                    let produtos;
+                    try {
+                        produtos = JSON.parse(textoBruto);
+                    } catch (e) {
+                        throw new Error(`A planilha não retornou um JSON válido. Retorno: "${textoBruto.substring(0, 150)}..."`);
                     }
 
-                    card.innerHTML = `
-                        <div>
-                            <div class="produto-nome">${prod.nome}</div>
-                            <div class="produto-preco">${precoFormatado}</div>
-                            <div class="produto-status" style="color: ${statusCor}">${statusTexto}</div>
-                        </div>
-                        <button class="btn-presentear" ${!isDisponivel ? 'disabled' : ''} onclick="escolherPresente('${prod.nome}')">
-                            ${isDisponivel ? 'Presentear' : 'Esgotado'}
-                        </button>
-                    `;
-                    grid.appendChild(card);
-                });
+                    loading.style.display = 'none';
+                    presentesCarregados = true;
 
-                temaDiv.appendChild(grid);
-                containerCategorias.appendChild(temaDiv);
-            }
-        })
-        .catch(err => {
-            console.error("Erro ao carregar presentes:", err);
-            loading.style.display = 'none';
-            containerCategorias.innerHTML = `
-                <p style="text-align: center; color: #721c24; width: 100%;">
-                    Não foi possível carregar a lista de presentes.<br>
-                    <small style="color: #999;">Verifique se a nova versão do Apps Script foi implantada como "Web App".</small>
-                </p>`;
-        });
-}
+                    if (produtos.error) {
+                        throw new Error(`Erro na planilha: ${produtos.error}`);
+                    }
+
+                    if (!produtos || !Array.isArray(produtos) || produtos.length === 0) {
+                        containerCategorias.innerHTML = '<p style="text-align: center; color: #777; width: 100%;">Nenhum produto disponível na aba PRESENTES.</p>';
+                        return;
+                    }
+
+                    const presentesAgrupados = {};
+
+                    produtos.forEach(prod => {
+                        const nomeValido = prod.nome;
+                        if (!nomeValido) return; 
+
+                        // Filtra e agrupa pela coluna "categoria" enviada pelo script
+                        const categoriaValida = prod.categoria || 'Outros Presentes';
+
+                        if (!presentesAgrupados[categoriaValida]) {
+                            presentesAgrupados[categoriaValida] = [];
+                        }
+
+                        presentesAgrupados[categoriaValida].push(prod);
+                    });
+
+                    // Cria cada seção de tema na tela com seus cards
+                    for (const categoria in presentesAgrupados) {
+                        const temaDiv = document.createElement('div');
+                        temaDiv.className = 'tema-section';
+
+                        const titulo = document.createElement('h3');
+                        titulo.className = 'tema-titulo';
+                        titulo.innerText = categoria;
+                        temaDiv.appendChild(titulo);
+
+                        const grid = document.createElement('div');
+                        grid.className = 'produtos-grid';
+
+                        presentesAgrupados[categoria].forEach(prod => {
+                            const card = document.createElement('div');
+                            card.className = 'produto-card';
+
+                            // Exibe o valor da cota se existir; senão, exibe o valor total do presente
+                            const precoExibir = prod.valor_cota > 0 ? prod.valor_cota : prod.valor_total;
+                            const precoFormatado = isNaN(precoExibir) || precoExibir <= 0 
+                                ? 'Cota Livre' 
+                                : `R$ ${precoExibir.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+
+                            // Calcula se as cotas estão esgotadas
+                            let isDisponivel = true;
+                            let statusTexto = 'Disponível';
+                            let statusCor = 'var(--verde-oliva)';
+
+                            if (prod.valor_cota > 0 && prod.valor_total > 0) {
+                                const maxCotas = Math.round(prod.valor_total / prod.valor_cota);
+                                if (prod.cotas_vendidas >= maxCotas) {
+                                    isDisponivel = false;
+                                    statusTexto = 'Esgotado';
+                                    statusCor = '#c0392b';
+                                } else if (prod.cotas_vendidas > 0) {
+                                    statusTexto = `${prod.cotas_vendidas} cota(s) comprada(s)`;
+                                }
+                            }
+
+                            card.innerHTML = `
+                                <div>
+                                    <div class="produto-nome">${prod.nome}</div>
+                                    <div class="produto-preco">${precoFormatado}</div>
+                                    <div class="produto-status" style="color: ${statusCor}">${statusTexto}</div>
+                                </div>
+                                <button class="btn-presentear" ${!isDisponivel ? 'disabled' : ''} onclick="escolherPresente('${prod.nome}')">
+                                    ${isDisponivel ? 'Presentear' : 'Esgotado'}
+                                </button>
+                            `;
+                            grid.appendChild(card);
+                        });
+
+                        temaDiv.appendChild(grid);
+                        containerCategorias.appendChild(temaDiv);
+                    }
+                })
+                .catch(err => {
+                    console.error("Erro ao carregar presentes:", err);
+                    loading.style.display = 'none';
+                    containerCategorias.innerHTML = `
+                        <div style="text-align: center; color: #721c24; background: #f8d7da; padding: 20px; border-radius: 8px; border: 1px solid #f5c6cb; margin-top: 20px;">
+                            <strong>Erro ao carregar os presentes:</strong><br>
+                            <p style="font-size: 0.9rem; margin-top: 10px; font-family: monospace;">${err.message}</p>
+                            <p style="font-size: 0.85rem; margin-top: 15px; color: #555;">
+                                Se a mensagem acima citar login ou HTML: certifique-se de implantar o seu script como <strong>Web App</strong>, configurado para rodar como <strong>"Eu"</strong> e acessível para <strong>"Qualquer Pessoa" (Anyone)</strong>.
+                            </p>
+                        </div>`;
+                });
+        }
+
         function escolherPresente(nomeProduto) {
             alert(`Você escolheu nos presentear com: "${nomeProduto}"! Redirecionando para finalizar sua escolha...`);
         }
