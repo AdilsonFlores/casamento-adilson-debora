@@ -833,51 +833,56 @@
         }
 
         function gerarLinkMercadoPago() {
-            const nomeComprador = document.getElementById('comprador-nome').value.trim();
-            const btnPagamento = document.getElementById('btn-gerar-pix');
-            
-            if (!nomeComprador) {
-                alert("Por favor, digite o seu nome para os noivos saberem quem os presenteou.");
-                return;
-            }
+    const nomeComprador = document.getElementById('comprador-nome').value.trim();
+    const btnPagamento = document.getElementById('btn-gerar-pix');
+    
+    if (!nomeComprador) {
+        alert("Por favor, digite o seu nome para os noivos saberem quem os presenteou.");
+        return;
+    }
 
-            btnPagamento.innerText = "GERANDO LINK DE PAGAMENTO...";
-            btnPagamento.disabled = true;
+    btnPagamento.innerText = "GERANDO LINK DE PAGAMENTO...";
+    btnPagamento.disabled = true;
 
-            const cotas = parseInt(document.getElementById('comprador-cotas').value) || 1;
-            const valorUnitario = presenteSelecionado.valor_cota > 0 ? presenteSelecionado.valor_cota : presenteSelecionado.valor_total;
+    const cotas = parseInt(document.getElementById('comprador-cotas').value) || 1;
+    const valorUnitario = presenteSelecionado.valor_cota > 0 ? presenteSelecionado.valor_cota : presenteSelecionado.valor_total;
 
-            const dadosPagamento = {
-                acao: "criar_pagamento",
-                nome_presente: presenteSelecionado.nome,
-                nome_comprador: nomeComprador,
-                quantidade_cotas: cotas,
-                valor_unitario: valorUnitario
-            };
+    const dadosPagamento = {
+        acao: "criar_pagamento",
+        nome_presente: presenteSelecionado.nome,
+        nome_comprador: nomeComprador,
+        quantidade_cotas: cotas,
+        valor_unitario: valorUnitario
+    };
 
-            fetch(urlWebhook, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(dadosPagamento)
-            })
-            .then(response => response.json())
-            .then(res => {
-                if (res.result === "success" && res.init_point) {
-                    alert("Link gerado com sucesso! Você será redirecionado para concluir o pagamento de forma segura no Mercado Pago.");
-                    window.location.href = res.init_point; // Redireciona para o checkout do MP
-                } else {
-                    throw new Error(res.error || "Erro ao criar link de preferência.");
-                }
-            })
-            .catch(error => {
-                console.error("Erro na geração do pagamento:", error);
-                alert(`Não foi possível gerar a transação: ${error.message}`);
-            })
-            .finally(() => {
-                btnPagamento.innerText = "IR PARA PAGAMENTO";
-                btnPagamento.disabled = false;
-            });
+    // Enviamos como texto simples para evitar que o navegador pré-analise a requisição (CORS preflight)
+    fetch(urlWebhook, {
+        method: "POST",
+        body: JSON.stringify(dadosPagamento)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Erro na rede ou resposta inválida do servidor.");
         }
+        return response.json();
+    })
+    .then(res => {
+        if (res.result === "success" && res.init_point) {
+            alert("Link gerado com sucesso! Você será redirecionado para concluir o pagamento de forma segura no Mercado Pago.");
+            window.location.href = res.init_point; 
+        } else {
+            throw new Error(res.error || "Erro ao gerar a preferência de pagamento.");
+        }
+    })
+    .catch(error => {
+        console.error("Erro na geração do pagamento:", error);
+        alert(`Não foi possível gerar a transação. Detalhes: ${error.message}\n\nCertifique-se de que salvou e publicou uma 'Nova Versão' do seu Google Apps Script.`);
+    })
+    .finally(() => {
+        btnPagamento.innerText = "IR PARA PAGAMENTO";
+        btnPagamento.disabled = false;
+    });
+}
 
         // --- SISTEMA ORIGINAL RSVP ---
         function limparTexto(texto) {
