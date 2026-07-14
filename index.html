@@ -353,6 +353,7 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-top: 20px;
+            margin-bottom: 30px;
         }
 
         .lista-btn {
@@ -372,6 +373,89 @@
             background: var(--verde-oliva);
             color: var(--branco);
             transform: translateY(-2px);
+        }
+
+        /* ==========================================
+           GRID DE CARDS DE PRODUTOS (MINIMALISTA)
+           ========================================== */
+        .produtos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .produto-card {
+            background: var(--branco);
+            border: 1px solid rgba(107, 124, 60, 0.15);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .produto-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(107, 124, 60, 0.08);
+        }
+
+        .produto-nome {
+            font-size: 1.1rem;
+            color: var(--verde-escuro);
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .produto-preco {
+            font-size: 1.2rem;
+            color: var(--texto-escuro);
+            margin-bottom: 15px;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+        }
+
+        .produto-status {
+            font-size: 0.85rem;
+            color: #777;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+
+        .btn-presentear {
+            background-color: var(--verde-claro);
+            border: 1px solid var(--verde-oliva);
+            color: var(--verde-escuro);
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-presentear:hover {
+            background-color: var(--verde-oliva);
+            color: var(--branco);
+        }
+
+        .btn-presentear:disabled {
+            background-color: #eaeaea;
+            border-color: #ccc;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .loading-gifts {
+            text-align: center;
+            font-style: italic;
+            color: var(--verde-oliva);
+            padding: 20px;
         }
     </style>
 </head>
@@ -472,13 +556,22 @@
                 </div>
             </div>
 
-            <!-- Painel 2: Presentes (Apenas Carrega/Mostra se Clicado) -->
+            <!-- Painel 2: Presentes -->
             <div id="presentes-panel" class="tab-content">
                 <p style="text-align: center; margin-bottom: 20px;">Sua presença é o nosso maior presente! Caso deseje nos abençoar com algo a mais, preparamos as listas abaixo:</p>
+                
+                <!-- Botões Originais -->
                 <div class="listas-grid">
                     <a href="#" target="_blank" class="lista-btn">🎁 Lista de Presentes Virtual</a>
                     <a href="#" target="_blank" class="lista-btn">✈️ Cotas de Lua de Mel</a>
                 </div>
+
+                <!-- Grid Dinâmico de Presentes (Carregado via planilha) -->
+                <h3 style="color: var(--verde-escuro); font-size: 1.3rem; text-align: center; margin-top: 40px; margin-bottom: 10px; font-weight: normal;">Presentes para o Lar</h3>
+                <p style="text-align: center; font-size: 0.9rem; color: var(--verde-oliva); margin-bottom: 20px; font-style: italic;">Selecione um item abaixo para nos presentear:</p>
+                
+                <div id="loading-presentes" class="loading-gifts" style="display: none;">Carregando opções de presentes...</div>
+                <div id="lista-produtos-grid" class="produtos-grid"></div>
             </div>
 
         </div>
@@ -493,21 +586,79 @@
         const urlWebhook = "https://script.google.com/macros/s/AKfycbyFWvs29R7VWbTlGAZu8ZJZqxnca7nPocyaFXxDQN0oJXNAYTmCM9wIGq754NGWtR2aiw/exec";
 
         let dadosGrupoAtual = null;
+        let presentesCarregados = false;
 
         // Função simples para alternar as abas
         function switchTab(tabId, buttonElement) {
-            // Remove a classe 'active' de todos os conteúdos
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
-            // Remove a classe 'active' de todos os botões de abas
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
 
-            // Ativa o conteúdo selecionado e adiciona foco no botão clicado
             document.getElementById(tabId).classList.add('active');
             buttonElement.classList.add('active');
+
+            // Carrega os presentes automaticamente apenas quando o usuário abre a aba
+            if (tabId === 'presentes-panel' && !presentesCarregados) {
+                carregarPresentesDaPlanilha();
+            }
+        }
+
+        // Função para carregar os presentes dinamicamente
+        function carregarPresentesDaPlanilha() {
+            const loading = document.getElementById('loading-presentes');
+            const grid = document.getElementById('lista-produtos-grid');
+            
+            loading.style.display = 'block';
+            grid.innerHTML = '';
+
+            // Adicionamos o parâmetro opcional caso seu script faça distinção de rotas
+            fetch(`${urlWebhook}?action=getGifts`)
+                .then(response => response.json())
+                .then(produtos => {
+                    loading.style.display = 'none';
+                    presentesCarregados = true;
+
+                    if (!produtos || produtos.length === 0) {
+                        grid.innerHTML = '<p style="text-align: center; color: #777; width: 100%;">Nenhum produto disponível no momento.</p>';
+                        return;
+                    }
+
+                    produtos.forEach(prod => {
+                        const card = document.createElement('div');
+                        card.className = 'produto-card';
+
+                        // Formatação de preço amigável
+                        const precoFormatado = prod.preco ? `R$ ${parseFloat(prod.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'Cota Livre';
+                        const statusTexto = prod.status === 'Disponível' ? 'Disponível' : 'Já Reservado';
+                        const isDisabled = prod.status !== 'Disponível';
+
+                        card.innerHTML = `
+                            <div>
+                                <div class="produto-nome">${prod.nome}</div>
+                                <div class="produto-preco">${precoFormatado}</div>
+                                <div class="produto-status" style="color: ${prod.status === 'Disponível' ? 'var(--verde-oliva)' : '#c0392b'}">${statusTexto}</div>
+                            </div>
+                            <button class="btn-presentear" ${isDisabled ? 'disabled' : ''} onclick="escolherPresente('${prod.nome}')">
+                                ${prod.status === 'Disponível' ? 'Presentear' : 'Esgotado'}
+                            </button>
+                        `;
+                        grid.appendChild(card);
+                    });
+                })
+                .catch(err => {
+                    console.error("Erro ao carregar presentes:", err);
+                    loading.style.display = 'none';
+                    grid.innerHTML = '<p style="text-align: center; color: #721c24; width: 100%;">Não foi possível carregar a lista de presentes neste momento.</p>';
+                });
+        }
+
+        // Ação ao clicar no botão de presentear
+        function escolherPresente(nomeProduto) {
+            alert(`Você escolheu nos presentear com: "${nomeProduto}"! Redirecionando para finalizar sua escolha...`);
+            // Aqui você pode redirecionar para um form de envio, exibir um modal com PIX ou gerar o link da sua planilha.
         }
 
         function limparTexto(texto) {
@@ -581,7 +732,7 @@
             const container = document.getElementById('family-members-container');
             
             container.innerHTML = '';
-            dadosGrupoAtual = group = grupo;
+            dadosGrupoAtual = grupo;
             document.getElementById('family-title').innerText = grupo.familia;
             
             grupo.membros.forEach((membro, index) => {
