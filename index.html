@@ -205,7 +205,7 @@
             color: var(--verde-escuro);
         }
 
-        input[type="text"], select {
+        input[type="text"], input[type="number"], select {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid #c3cbd0;
@@ -344,7 +344,7 @@
             display: block;
         }
 
-        /* Divisão por Temas e Cards de Produtos */
+        /* Temas e Cards de Produtos */
         .tema-section {
             margin-top: 40px;
             margin-bottom: 20px;
@@ -438,6 +438,66 @@
             font-style: italic;
             color: var(--verde-oliva);
             padding: 20px;
+        }
+
+        /* --- ESTILOS DO MODAL DO MERCADO PAGO --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: var(--branco);
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.15);
+            border-top: 5px solid var(--verde-oliva);
+            position: relative;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .modal-title {
+            color: var(--verde-escuro);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .total-payment {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--verde-escuro);
+            background: var(--verde-claro);
+            padding: 12px;
+            text-align: center;
+            border-radius: 6px;
+            margin: 15px 0;
         }
     </style>
 </head>
@@ -550,16 +610,39 @@
 
     </div>
 
+    <!-- --- MODAL DE SELEÇÃO DE COTAS E DADOS DO PAGAMENTO --- -->
+    <div id="modal-pagamento" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fecharModal()">&times;</span>
+            <h3 class="modal-title" id="modal-nome-presente">Contribuir com Presente</h3>
+            
+            <label for="comprador-nome">Seu Nome Completo:</label>
+            <input type="text" id="comprador-nome" placeholder="Para os noivos saberem quem deu">
+
+            <div id="container-cotas-selecao">
+                <label for="comprador-cotas">Quantidade de Cotas:</label>
+                <input type="number" id="comprador-cotas" min="1" value="1" oninput="atualizarTotalModal()">
+                <p style="font-size: 0.85rem; color: #555; margin-top: -10px; margin-bottom: 15px;" id="texto-max-cotas"></p>
+            </div>
+
+            <div class="total-payment" id="modal-valor-total">
+                Total: R$ 0,00
+            </div>
+
+            <button type="button" class="btn" id="btn-gerar-pix" onclick="gerarLinkMercadoPago()">Ir para Pagamento</button>
+        </div>
+    </div>
+
     <footer>
         <p>© 2026 Casamento Adilson & Débora. Todos os direitos reservados.</p>
     </footer>
 
     <script>
-        // SEU LINK DO WEBHOOK DO GOOGLE APPS SCRIPT
         const urlWebhook = "https://script.google.com/macros/s/AKfycbyFWvs29R7VWbTlGAZu8ZJZqxnca7nPocyaFXxDQN0oJXNAYTmCM9wIGq754NGWtR2aiw/exec";
 
         let dadosGrupoAtual = null;
         let presentesCarregados = false;
+        let presenteSelecionado = null; // Armazena o objeto do presente que está sendo comprado
 
         function switchTab(tabId, buttonElement) {
             document.querySelectorAll('.tab-content').forEach(content => {
@@ -585,13 +668,12 @@
             loading.style.display = 'block';
             containerCategorias.innerHTML = '';
 
-            // Sincronizado com e.parameter.tipo do seu script
             fetch(`${urlWebhook}?tipo=presentes`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`O servidor retornou um status inválido HTTP: ${response.status}`);
                     }
-                    return response.text(); // lê como texto para depurar caso retorne erro HTML do Google
+                    return response.text();
                 })
                 .then(textoBruto => {
                     let produtos;
@@ -613,13 +695,15 @@
                         return;
                     }
 
+                    // Salva globalmente os presentes para fácil acesso no clique
+                    window.listaGlobalPresentes = produtos;
+
                     const presentesAgrupados = {};
 
                     produtos.forEach(prod => {
                         const nomeValido = prod.nome;
                         if (!nomeValido) return; 
 
-                        // Filtra e agrupa pela coluna "categoria" enviada pelo script
                         const categoriaValida = prod.categoria || 'Outros Presentes';
 
                         if (!presentesAgrupados[categoriaValida]) {
@@ -629,7 +713,6 @@
                         presentesAgrupados[categoriaValida].push(prod);
                     });
 
-                    // Cria cada seção de tema na tela com seus cards
                     for (const categoria in presentesAgrupados) {
                         const temaDiv = document.createElement('div');
                         temaDiv.className = 'tema-section';
@@ -646,13 +729,11 @@
                             const card = document.createElement('div');
                             card.className = 'produto-card';
 
-                            // Exibe o valor da cota se existir; senão, exibe o valor total do presente
                             const precoExibir = prod.valor_cota > 0 ? prod.valor_cota : prod.valor_total;
                             const precoFormatado = isNaN(precoExibir) || precoExibir <= 0 
                                 ? 'Cota Livre' 
                                 : `R$ ${precoExibir.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
-                            // Calcula se as cotas estão esgotadas
                             let isDisponivel = true;
                             let statusTexto = 'Disponível';
                             let statusCor = 'var(--verde-oliva)';
@@ -674,7 +755,7 @@
                                     <div class="produto-preco">${precoFormatado}</div>
                                     <div class="produto-status" style="color: ${statusCor}">${statusTexto}</div>
                                 </div>
-                                <button class="btn-presentear" ${!isDisponivel ? 'disabled' : ''} onclick="escolherPresente('${prod.nome}')">
+                                <button class="btn-presentear" ${!isDisponivel ? 'disabled' : ''} onclick="abrirModalCompra(${prod.id})">
                                     ${isDisponivel ? 'Presentear' : 'Esgotado'}
                                 </button>
                             `;
@@ -692,17 +773,113 @@
                         <div style="text-align: center; color: #721c24; background: #f8d7da; padding: 20px; border-radius: 8px; border: 1px solid #f5c6cb; margin-top: 20px;">
                             <strong>Erro ao carregar os presentes:</strong><br>
                             <p style="font-size: 0.9rem; margin-top: 10px; font-family: monospace;">${err.message}</p>
-                            <p style="font-size: 0.85rem; margin-top: 15px; color: #555;">
-                                Se a mensagem acima citar login ou HTML: certifique-se de implantar o seu script como <strong>Web App</strong>, configurado para rodar como <strong>"Eu"</strong> e acessível para <strong>"Qualquer Pessoa" (Anyone)</strong>.
-                            </p>
                         </div>`;
                 });
         }
 
-        function escolherPresente(nomeProduto) {
-            alert(`Você escolheu nos presentear com: "${nomeProduto}"! Redirecionando para finalizar sua escolha...`);
+        // --- CONTROLE DE COMPRA COM MERCADO PAGO ---
+        function abrirModalCompra(idPresente) {
+            if (!window.listaGlobalPresentes) return;
+            
+            presenteSelecionado = window.listaGlobalPresentes.find(p => p.id == idPresente);
+            if (!presenteSelecionado) return;
+
+            document.getElementById('modal-nome-presente').innerText = presenteSelecionado.nome;
+            document.getElementById('comprador-nome').value = '';
+            
+            const divCotas = document.getElementById('container-cotas-selecao');
+            const inputCotas = document.getElementById('comprador-cotas');
+            
+            if (presenteSelecionado.valor_cota > 0) {
+                // É um produto cotizado
+                divCotas.style.display = 'block';
+                inputCotas.value = 1;
+                
+                const maxCotas = Math.round(presenteSelecionado.valor_total / presenteSelecionado.valor_cota);
+                const cotasDisponiveis = maxCotas - (presenteSelecionado.cotas_vendidas || 0);
+                inputCotas.max = cotasDisponiveis;
+                document.getElementById('texto-max-cotas').innerText = `Cada cota custa R$ ${presenteSelecionado.valor_cota.toFixed(2)}. ${cotasDisponiveis} cotas disponíveis.`;
+            } else {
+                // É um produto de valor cheio (não cotizado)
+                divCotas.style.display = 'none';
+                inputCotas.value = 1;
+            }
+
+            atualizarTotalModal();
+            document.getElementById('modal-pagamento').style.display = 'block';
         }
 
+        function fecharModal() {
+            document.getElementById('modal-pagamento').style.display = 'none';
+            presenteSelecionado = null;
+        }
+
+        function atualizarTotalModal() {
+            if (!presenteSelecionado) return;
+
+            const inputCotas = document.getElementById('comprador-cotas');
+            let cotas = parseInt(inputCotas.value) || 1;
+            if (cotas < 1) cotas = 1;
+
+            if (inputCotas.max && cotas > parseInt(inputCotas.max)) {
+                cotas = parseInt(inputCotas.max);
+                inputCotas.value = cotas;
+            }
+
+            const valorUnitario = presenteSelecionado.valor_cota > 0 ? presenteSelecionado.valor_cota : presenteSelecionado.valor_total;
+            const total = valorUnitario * cotas;
+
+            document.getElementById('modal-valor-total').innerText = `Total: R$ ${total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+        }
+
+        function gerarLinkMercadoPago() {
+            const nomeComprador = document.getElementById('comprador-nome').value.trim();
+            const btnPagamento = document.getElementById('btn-gerar-pix');
+            
+            if (!nomeComprador) {
+                alert("Por favor, digite o seu nome para os noivos saberem quem os presenteou.");
+                return;
+            }
+
+            btnPagamento.innerText = "GERANDO LINK DE PAGAMENTO...";
+            btnPagamento.disabled = true;
+
+            const cotas = parseInt(document.getElementById('comprador-cotas').value) || 1;
+            const valorUnitario = presenteSelecionado.valor_cota > 0 ? presenteSelecionado.valor_cota : presenteSelecionado.valor_total;
+
+            const dadosPagamento = {
+                acao: "criar_pagamento",
+                nome_presente: presenteSelecionado.nome,
+                nome_comprador: nomeComprador,
+                quantidade_cotas: cotas,
+                valor_unitario: valorUnitario
+            };
+
+            fetch(urlWebhook, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dadosPagamento)
+            })
+            .then(response => response.json())
+            .then(res => {
+                if (res.result === "success" && res.init_point) {
+                    alert("Link gerado com sucesso! Você será redirecionado para concluir o pagamento de forma segura no Mercado Pago.");
+                    window.location.href = res.init_point; // Redireciona para o checkout do MP
+                } else {
+                    throw new Error(res.error || "Erro ao criar link de preferência.");
+                }
+            })
+            .catch(error => {
+                console.error("Erro na geração do pagamento:", error);
+                alert(`Não foi possível gerar a transação: ${error.message}`);
+            })
+            .finally(() => {
+                btnPagamento.innerText = "IR PARA PAGAMENTO";
+                btnPagamento.disabled = false;
+            });
+        }
+
+        // --- SISTEMA ORIGINAL RSVP ---
         function limparTexto(texto) {
             return texto
                 .normalize("NFD")
@@ -821,7 +998,6 @@
 
             fetch(urlWebhook, {
                 method: "POST",
-                mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(dadosParaEnviar)
             })
