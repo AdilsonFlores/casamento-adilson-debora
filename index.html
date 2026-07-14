@@ -584,99 +584,113 @@
 
         // Função para buscar e organizar os presentes por temas de forma robusta
         function carregarPresentesDaPlanilha() {
-            const loading = document.getElementById('loading-presentes');
-            const containerCategorias = document.getElementById('lista-presentes-categorias');
-            
-            loading.style.display = 'block';
-            containerCategorias.innerHTML = '';
+    const loading = document.getElementById('loading-presentes');
+    const containerCategorias = document.getElementById('lista-presentes-categorias');
+    
+    loading.style.display = 'block';
+    containerCategorias.innerHTML = '';
 
-            fetch(`${urlWebhook}?action=getGifts`)
-                .then(response => response.json())
-                .then(produtos => {
-                    loading.style.display = 'none';
-                    presentesCarregados = true;
+    // Chamando com a URL sincronizada com o seu Apps Script (?tipo=presentes)
+    fetch(`${urlWebhook}?tipo=presentes`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erro HTTP! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(produtos => {
+            loading.style.display = 'none';
+            presentesCarregados = true;
 
-                    if (!produtos || produtos.length === 0) {
-                        containerCategorias.innerHTML = '<p style="text-align: center; color: #777; width: 100%;">Nenhum produto disponível no momento.</p>';
-                        return;
-                    }
+            if (!produtos || !Array.isArray(produtos) || produtos.length === 0) {
+                containerCategorias.innerHTML = '<p style="text-align: center; color: #777; width: 100%;">Nenhum presente disponível no momento.</p>';
+                return;
+            }
 
-                    // AGRUPAMENTO DOS PRODUTOS POR TEMA
-                    const presentesAgrupados = {};
+            // Agrupando os presentes pela chave "categoria" definida no seu Apps Script
+            const presentesAgrupados = {};
 
-                    produtos.forEach(prod => {
-                        // Trata erros de mapeamento da planilha: se o nome for nulo, pula.
-                        // Se o tema/categoria não existir, define como "Outros presentes"
-                        const nomeValido = prod.nome || prod.Produto || prod.item;
-                        if (!nomeValido) return; 
+            produtos.forEach(prod => {
+                const nomeValido = prod.nome;
+                if (!nomeValido) return; 
 
-                        const temaValido = prod.tema || prod.categoria || prod.Tema || 'Outros Presentes';
-                        const precoValido = prod.preco !== undefined ? prod.preco : (prod.valor || prod.Preco);
-                        const statusValido = prod.status || prod.Status || 'Disponível';
+                // Agrupa por categoria. Se não houver, define como "Outros"
+                const temaValido = prod.categoria || 'Outros Presentes';
 
-                        if (!presentesAgrupados[temaValido]) {
-                            presentesAgrupados[temaValido] = [];
+                if (!presentesAgrupados[temaValido]) {
+                    presentesAgrupados[temaValido] = [];
+                }
+
+                presentesAgrupados[temaValido].push(prod);
+            });
+
+            // Geração das seções por Categoria e seus respectivos Cards
+            for (const tema in presentesAgrupados) {
+                const temaDiv = document.createElement('div');
+                temaDiv.className = 'tema-section';
+
+                const titulo = document.createElement('h3');
+                titulo.className = 'tema-titulo';
+                titulo.innerText = tema;
+                temaDiv.appendChild(titulo);
+
+                const grid = document.createElement('div');
+                grid.className = 'produtos-grid';
+
+                presentesAgrupados[tema].forEach(prod => {
+                    const card = document.createElement('div');
+                    card.className = 'produto-card';
+
+                    // Tratamento do Preço: se houver valor de cota, exibe ele; senão, o valor total.
+                    const precoExibir = prod.valor_cota > 0 ? prod.valor_cota : prod.valor_total;
+                    const precoFormatado = isNaN(precoExibir) || precoExibir <= 0 
+                        ? 'Cota Livre' 
+                        : `R$ ${precoExibir.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+
+                    // Tratamento de Status (Cotas Esgotadas ou Disponível)
+                    // Se o total de cotas vendidas atingir o valor total (em caso de cotas fixas)
+                    let isDisponivel = true;
+                    let statusTexto = 'Disponível';
+                    let statusCor = 'var(--verde-oliva)';
+
+                    if (prod.valor_cota > 0 && prod.valor_total > 0) {
+                        const maxCotas = Math.round(prod.valor_total / prod.valor_cota);
+                        if (prod.cotas_vendidas >= maxCotas) {
+                            isDisponivel = false;
+                            statusTexto = 'Esgotado';
+                            statusCor = '#c0392b';
+                        } else if (prod.cotas_vendidas > 0) {
+                            statusTexto = `${prod.cotas_vendidas} cota(s) comprada(s)`;
                         }
-
-                        presentesAgrupados[temaValido].push({
-                            nome: nomeValido,
-                            preco: precoValido,
-                            status: statusValido
-                        });
-                    });
-
-                    // GERAÇÃO DOS CUSTOS E SEÇÕES NA TELA
-                    for (const tema in presentesAgrupados) {
-                        // Cria seção do Tema
-                        const temaDiv = document.createElement('div');
-                        temaDiv.className = 'tema-section';
-
-                        // Título do Tema
-                        const titulo = document.createElement('h3');
-                        titulo.className = 'tema-titulo';
-                        titulo.innerText = tema;
-                        temaDiv.appendChild(titulo);
-
-                        // Grid dos Cards daquele Tema
-                        const grid = document.createElement('div');
-                        grid.className = 'produtos-grid';
-
-                        presentesAgrupados[tema].forEach(prod => {
-                            const card = document.createElement('div');
-                            card.className = 'produto-card';
-
-                            // Formatação do preço e status amigáveis
-                            const valorFloat = parseFloat(prod.preco);
-                            const precoFormatado = isNaN(valorFloat) || valorFloat <= 0 ? 'Cota Livre' : `R$ ${valorFloat.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-                            
-                            const isDisponivel = prod.status.trim().toLowerCase() === 'disponivel' || prod.status.trim().toLowerCase() === 'disponível';
-                            const statusTexto = isDisponivel ? 'Disponível' : 'Já Reservado';
-                            const statusCor = isDisponivel ? 'var(--verde-oliva)' : '#c0392b';
-
-                            card.innerHTML = `
-                                <div>
-                                    <div class="produto-nome">${prod.nome}</div>
-                                    <div class="produto-preco">${precoFormatado}</div>
-                                    <div class="produto-status" style="color: ${statusCor}">${statusTexto}</div>
-                                </div>
-                                <button class="btn-presentear" ${!isDisponivel ? 'disabled' : ''} onclick="escolherPresente('${prod.nome}')">
-                                    ${isDisponivel ? 'Presentear' : 'Esgotado'}
-                                </button>
-                            `;
-                            grid.appendChild(card);
-                        });
-
-                        temaDiv.appendChild(grid);
-                        containerCategorias.appendChild(temaDiv);
                     }
-                })
-                .catch(err => {
-                    console.error("Erro ao carregar presentes:", err);
-                    loading.style.display = 'none';
-                    containerCategorias.innerHTML = '<p style="text-align: center; color: #721c24; width: 100%;">Não foi possível carregar a lista de presentes neste momento.</p>';
-                });
-        }
 
+                    card.innerHTML = `
+                        <div>
+                            <div class="produto-nome">${prod.nome}</div>
+                            <div class="produto-preco">${precoFormatado}</div>
+                            <div class="produto-status" style="color: ${statusCor}">${statusTexto}</div>
+                        </div>
+                        <button class="btn-presentear" ${!isDisponivel ? 'disabled' : ''} onclick="escolherPresente('${prod.nome}')">
+                            ${isDisponivel ? 'Presentear' : 'Esgotado'}
+                        </button>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                temaDiv.appendChild(grid);
+                containerCategorias.appendChild(temaDiv);
+            }
+        })
+        .catch(err => {
+            console.error("Erro ao carregar presentes:", err);
+            loading.style.display = 'none';
+            containerCategorias.innerHTML = `
+                <p style="text-align: center; color: #721c24; width: 100%;">
+                    Não foi possível carregar a lista de presentes.<br>
+                    <small style="color: #999;">Verifique se a nova versão do Apps Script foi implantada como "Web App".</small>
+                </p>`;
+        });
+}
         function escolherPresente(nomeProduto) {
             alert(`Você escolheu nos presentear com: "${nomeProduto}"! Redirecionando para finalizar sua escolha...`);
         }
