@@ -338,7 +338,6 @@
             border-bottom-color: var(--verde-oliva);
         }
 
-        /* Oculta os painéis de conteúdo que não estão ativos */
         .tab-content {
             display: none;
         }
@@ -347,42 +346,28 @@
             display: block;
         }
 
-        /* Estilo da Lista Simples de Presentes dentro da Aba */
-        .listas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-            margin-bottom: 30px;
-        }
-
-        .lista-btn {
-            display: block;
-            background: var(--verde-claro);
-            border: 1px solid var(--verde-oliva);
-            color: var(--verde-escuro);
-            padding: 15px;
-            text-align: center;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .lista-btn:hover {
-            background: var(--verde-oliva);
-            color: var(--branco);
-            transform: translateY(-2px);
-        }
-
         /* ==========================================
-           GRID DE CARDS DE PRODUTOS (MINIMALISTA)
+           DIVISÃO POR TEMAS E SEUS CARDS DE PRODUTOS
            ========================================== */
+        .tema-section {
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .tema-titulo {
+            color: var(--verde-escuro);
+            font-size: 1.4rem;
+            border-bottom: 1px solid rgba(107, 124, 60, 0.2);
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+
         .produtos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
-            margin-top: 25px;
         }
 
         .produto-card {
@@ -396,6 +381,7 @@
             justify-content: space-between;
             box-shadow: 0 2px 8px rgba(0,0,0,0.02);
             transition: transform 0.2s, box-shadow 0.2s;
+            min-height: 180px;
         }
 
         .produto-card:hover {
@@ -420,9 +406,9 @@
 
         .produto-status {
             font-size: 0.85rem;
-            color: #777;
             margin-bottom: 12px;
             font-style: italic;
+            font-weight: bold;
         }
 
         .btn-presentear {
@@ -556,22 +542,14 @@
                 </div>
             </div>
 
-            <!-- Painel 2: Presentes -->
+            <!-- Painel 2: Presentes (Organizado por Temas) -->
             <div id="presentes-panel" class="tab-content">
-                <p style="text-align: center; margin-bottom: 20px;">Sua presença é o nosso maior presente! Caso deseje nos abençoar com algo a mais, preparamos as listas abaixo:</p>
-                
-                <!-- Botões Originais -->
-                <div class="listas-grid">
-                    <a href="#" target="_blank" class="lista-btn">🎁 Lista de Presentes Virtual</a>
-                    <a href="#" target="_blank" class="lista-btn">✈️ Cotas de Lua de Mel</a>
-                </div>
-
-                <!-- Grid Dinâmico de Presentes (Carregado via planilha) -->
-                <h3 style="color: var(--verde-escuro); font-size: 1.3rem; text-align: center; margin-top: 40px; margin-bottom: 10px; font-weight: normal;">Presentes para o Lar</h3>
-                <p style="text-align: center; font-size: 0.9rem; color: var(--verde-oliva); margin-bottom: 20px; font-style: italic;">Selecione um item abaixo para nos presentear:</p>
+                <p style="text-align: center; margin-bottom: 30px;">Sua presença é o nosso maior presente! Caso deseje nos abençoar com algo a mais, escolha um item da nossa lista abaixo:</p>
                 
                 <div id="loading-presentes" class="loading-gifts" style="display: none;">Carregando opções de presentes...</div>
-                <div id="lista-produtos-grid" class="produtos-grid"></div>
+                
+                <!-- Onde as Seções de Temas com seus respectivos Cards serão geradas -->
+                <div id="lista-presentes-categorias"></div>
             </div>
 
         </div>
@@ -588,7 +566,6 @@
         let dadosGrupoAtual = null;
         let presentesCarregados = false;
 
-        // Função simples para alternar as abas
         function switchTab(tabId, buttonElement) {
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
@@ -600,21 +577,19 @@
             document.getElementById(tabId).classList.add('active');
             buttonElement.classList.add('active');
 
-            // Carrega os presentes automaticamente apenas quando o usuário abre a aba
             if (tabId === 'presentes-panel' && !presentesCarregados) {
                 carregarPresentesDaPlanilha();
             }
         }
 
-        // Função para carregar os presentes dinamicamente
+        // Função para buscar e organizar os presentes por temas de forma robusta
         function carregarPresentesDaPlanilha() {
             const loading = document.getElementById('loading-presentes');
-            const grid = document.getElementById('lista-produtos-grid');
+            const containerCategorias = document.getElementById('lista-presentes-categorias');
             
             loading.style.display = 'block';
-            grid.innerHTML = '';
+            containerCategorias.innerHTML = '';
 
-            // Adicionamos o parâmetro opcional caso seu script faça distinção de rotas
             fetch(`${urlWebhook}?action=getGifts`)
                 .then(response => response.json())
                 .then(produtos => {
@@ -622,43 +597,88 @@
                     presentesCarregados = true;
 
                     if (!produtos || produtos.length === 0) {
-                        grid.innerHTML = '<p style="text-align: center; color: #777; width: 100%;">Nenhum produto disponível no momento.</p>';
+                        containerCategorias.innerHTML = '<p style="text-align: center; color: #777; width: 100%;">Nenhum produto disponível no momento.</p>';
                         return;
                     }
 
+                    // AGRUPAMENTO DOS PRODUTOS POR TEMA
+                    const presentesAgrupados = {};
+
                     produtos.forEach(prod => {
-                        const card = document.createElement('div');
-                        card.className = 'produto-card';
+                        // Trata erros de mapeamento da planilha: se o nome for nulo, pula.
+                        // Se o tema/categoria não existir, define como "Outros presentes"
+                        const nomeValido = prod.nome || prod.Produto || prod.item;
+                        if (!nomeValido) return; 
 
-                        // Formatação de preço amigável
-                        const precoFormatado = prod.preco ? `R$ ${parseFloat(prod.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'Cota Livre';
-                        const statusTexto = prod.status === 'Disponível' ? 'Disponível' : 'Já Reservado';
-                        const isDisabled = prod.status !== 'Disponível';
+                        const temaValido = prod.tema || prod.categoria || prod.Tema || 'Outros Presentes';
+                        const precoValido = prod.preco !== undefined ? prod.preco : (prod.valor || prod.Preco);
+                        const statusValido = prod.status || prod.Status || 'Disponível';
 
-                        card.innerHTML = `
-                            <div>
-                                <div class="produto-nome">${prod.nome}</div>
-                                <div class="produto-preco">${precoFormatado}</div>
-                                <div class="produto-status" style="color: ${prod.status === 'Disponível' ? 'var(--verde-oliva)' : '#c0392b'}">${statusTexto}</div>
-                            </div>
-                            <button class="btn-presentear" ${isDisabled ? 'disabled' : ''} onclick="escolherPresente('${prod.nome}')">
-                                ${prod.status === 'Disponível' ? 'Presentear' : 'Esgotado'}
-                            </button>
-                        `;
-                        grid.appendChild(card);
+                        if (!presentesAgrupados[temaValido]) {
+                            presentesAgrupados[temaValido] = [];
+                        }
+
+                        presentesAgrupados[temaValido].push({
+                            nome: nomeValido,
+                            preco: precoValido,
+                            status: statusValido
+                        });
                     });
+
+                    // GERAÇÃO DOS CUSTOS E SEÇÕES NA TELA
+                    for (const tema in presentesAgrupados) {
+                        // Cria seção do Tema
+                        const temaDiv = document.createElement('div');
+                        temaDiv.className = 'tema-section';
+
+                        // Título do Tema
+                        const titulo = document.createElement('h3');
+                        titulo.className = 'tema-titulo';
+                        titulo.innerText = tema;
+                        temaDiv.appendChild(titulo);
+
+                        // Grid dos Cards daquele Tema
+                        const grid = document.createElement('div');
+                        grid.className = 'produtos-grid';
+
+                        presentesAgrupados[tema].forEach(prod => {
+                            const card = document.createElement('div');
+                            card.className = 'produto-card';
+
+                            // Formatação do preço e status amigáveis
+                            const valorFloat = parseFloat(prod.preco);
+                            const precoFormatado = isNaN(valorFloat) || valorFloat <= 0 ? 'Cota Livre' : `R$ ${valorFloat.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+                            
+                            const isDisponivel = prod.status.trim().toLowerCase() === 'disponivel' || prod.status.trim().toLowerCase() === 'disponível';
+                            const statusTexto = isDisponivel ? 'Disponível' : 'Já Reservado';
+                            const statusCor = isDisponivel ? 'var(--verde-oliva)' : '#c0392b';
+
+                            card.innerHTML = `
+                                <div>
+                                    <div class="produto-nome">${prod.nome}</div>
+                                    <div class="produto-preco">${precoFormatado}</div>
+                                    <div class="produto-status" style="color: ${statusCor}">${statusTexto}</div>
+                                </div>
+                                <button class="btn-presentear" ${!isDisponivel ? 'disabled' : ''} onclick="escolherPresente('${prod.nome}')">
+                                    ${isDisponivel ? 'Presentear' : 'Esgotado'}
+                                </button>
+                            `;
+                            grid.appendChild(card);
+                        });
+
+                        temaDiv.appendChild(grid);
+                        containerCategorias.appendChild(temaDiv);
+                    }
                 })
                 .catch(err => {
                     console.error("Erro ao carregar presentes:", err);
                     loading.style.display = 'none';
-                    grid.innerHTML = '<p style="text-align: center; color: #721c24; width: 100%;">Não foi possível carregar a lista de presentes neste momento.</p>';
+                    containerCategorias.innerHTML = '<p style="text-align: center; color: #721c24; width: 100%;">Não foi possível carregar a lista de presentes neste momento.</p>';
                 });
         }
 
-        // Ação ao clicar no botão de presentear
         function escolherPresente(nomeProduto) {
             alert(`Você escolheu nos presentear com: "${nomeProduto}"! Redirecionando para finalizar sua escolha...`);
-            // Aqui você pode redirecionar para um form de envio, exibir um modal com PIX ou gerar o link da sua planilha.
         }
 
         function limparTexto(texto) {
