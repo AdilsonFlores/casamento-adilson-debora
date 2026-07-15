@@ -305,7 +305,7 @@
             margin-top: 60px;
         }
 
-        /* Sistema de Abas */
+        /* Sistema de Abas Principais */
         .tabs-container {
             display: flex;
             justify-content: center;
@@ -344,10 +344,44 @@
             display: block;
         }
 
+        /* --- SUB-ABAS (Filtro por Categorias de Presentes) --- */
+        .sub-tabs-categorias {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .sub-tab-btn {
+            background-color: var(--branco);
+            color: var(--verde-oliva);
+            border: 1px solid rgba(107, 124, 60, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .sub-tab-btn:hover {
+            background-color: var(--verde-claro);
+            color: var(--verde-escuro);
+        }
+
+        .sub-tab-btn.active {
+            background-color: var(--verde-oliva);
+            color: var(--branco);
+            border-color: var(--verde-oliva);
+            box-shadow: 0 2px 6px rgba(107, 124, 60, 0.2);
+        }
+
         /* Temas e Cards de Produtos */
         .tema-section {
-            margin-top: 40px;
-            margin-bottom: 20px;
+            margin-top: 10px;
+            margin-bottom: 30px;
         }
 
         .tema-titulo {
@@ -539,7 +573,7 @@
                     <p style="font-size: 1.1rem; margin-bottom: 5px;"><strong>Esporte Fino</strong></p>
                     
                     <div class="traje-text">
-                        <p>Queremos que todos se sintam confortáveis para comemorar conosco! Sugerimos um estilo arrumado, mas sem complicações:</p>
+                        <p>Queremos que todos se sintam confortáveis para comemorar conosco! Sugerimos um style arrumado, mas sem complicações:</p>
                         <ul>
                             <li><strong>Para eles:</strong> Camisa de botão (manga longa ou curta) e calça comprida (sarja, social ou jeans escuro). <em style="color: var(--verde-escuro);">Não é necessário usar terno nem gravata!</em></li>
                             <li><strong>Para elas:</strong> Vestidos leves (curtos ou midis), saias com blusas elegantes ou macacões confortáveis.</li>
@@ -563,7 +597,7 @@
         <!-- Seção Interativa -->
         <div class="section" id="interacao-convidados">
             
-            <!-- Menu das Abas -->
+            <!-- Menu das Abas Principais -->
             <div class="tabs-container">
                 <button class="tab-btn active" onclick="switchTab('rsvp-panel', this)">Confirmar Presença</button>
                 <button class="tab-btn" onclick="switchTab('presentes-panel', this)">Lista de Presentes</button>
@@ -601,6 +635,17 @@
             <div id="presentes-panel" class="tab-content">
                 <p style="text-align: center; margin-bottom: 30px;">Sua presença é o nosso maior presente! Caso deseje nos abençoar com algo a mais, escolha um item da nossa lista abaixo:</p>
                 
+                <!-- Sub-Abas de Categoria (Filtros) -->
+                <div class="sub-tabs-categorias">
+                    <button class="sub-tab-btn active" onclick="filtrarCategoria('Todas')">Todas</button>
+                    <button class="sub-tab-btn" onclick="filtrarCategoria('Eletrodomésticos')">Eletrodomésticos</button>
+                    <button class="sub-tab-btn" onclick="filtrarCategoria('Móveis')">Móveis</button>
+                    <button class="sub-tab-btn" onclick="filtrarCategoria('Cama Mesa e Banho')">Cama, Mesa e Banho</button>
+                    <button class="sub-tab-btn" onclick="filtrarCategoria('Utensílios')">Utensílios</button>
+                    <button class="sub-tab-btn" onclick="filtrarCategoria('Pets (Thor Tom e Nina)')">Pets</button>
+                    <button class="sub-tab-btn" onclick="filtrarCategoria('Lua de Mel')">Lua de Mel</button>
+                </div>
+
                 <div id="loading-presentes" class="loading-gifts" style="display: none;">Carregando opções de presentes...</div>
                 
                 <div id="lista-presentes-categorias"></div>
@@ -643,6 +688,9 @@
         let dadosGrupoAtual = null;
         let presentesCarregados = false;
         let presenteSelecionado = null; // Armazena o objeto do presente que está sendo comprado
+        
+        // Mantém todos os dados crus vindos da planilha para filtragem local rápida pelas sub-abas
+        let todosPresentesDaPlanilha = []; 
 
         function switchTab(tabId, buttonElement) {
             document.querySelectorAll('.tab-content').forEach(content => {
@@ -660,7 +708,7 @@
             }
         }
 
-        // Carrega, processa e divide por categoria os presentes
+        // Carrega e processa inicialmente todos os presentes da Planilha
         function carregarPresentesDaPlanilha() {
             const loading = document.getElementById('loading-presentes');
             const containerCategorias = document.getElementById('lista-presentes-categorias');
@@ -695,76 +743,14 @@
                         return;
                     }
 
+                    // Filtra apenas os presentes ativos na planilha (TRUE)
+                    todosPresentesDaPlanilha = produtos.filter(item => String(item.ativo).toUpperCase() === 'TRUE');
+                    
                     // Salva globalmente os presentes para fácil acesso no clique
-                    window.listaGlobalPresentes = produtos;
+                    window.listaGlobalPresentes = todosPresentesDaPlanilha;
 
-                    const presentesAgrupados = {};
-
-                    produtos.forEach(prod => {
-                        const nomeValido = prod.nome;
-                        if (!nomeValido) return; 
-
-                        const categoriaValida = prod.categoria || 'Outros Presentes';
-
-                        if (!presentesAgrupados[categoriaValida]) {
-                            presentesAgrupados[categoriaValida] = [];
-                        }
-
-                        presentesAgrupados[categoriaValida].push(prod);
-                    });
-
-                    for (const categoria in presentesAgrupados) {
-                        const temaDiv = document.createElement('div');
-                        temaDiv.className = 'tema-section';
-
-                        const titulo = document.createElement('h3');
-                        titulo.className = 'tema-titulo';
-                        titulo.innerText = categoria;
-                        temaDiv.appendChild(titulo);
-
-                        const grid = document.createElement('div');
-                        grid.className = 'produtos-grid';
-
-                        presentesAgrupados[categoria].forEach(prod => {
-                            const card = document.createElement('div');
-                            card.className = 'produto-card';
-
-                            const precoExibir = prod.valor_cota > 0 ? prod.valor_cota : prod.valor_total;
-                            const precoFormatado = isNaN(precoExibir) || precoExibir <= 0 
-                                ? 'Cota Livre' 
-                                : `R$ ${precoExibir.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-
-                            let isDisponivel = true;
-                            let statusTexto = 'Disponível';
-                            let statusCor = 'var(--verde-oliva)';
-
-                            if (prod.valor_cota > 0 && prod.valor_total > 0) {
-                                const maxCotas = Math.round(prod.valor_total / prod.valor_cota);
-                                if (prod.cotas_vendidas >= maxCotas) {
-                                    isDisponivel = false;
-                                    statusTexto = 'Esgotado';
-                                    statusCor = '#c0392b';
-                                } else if (prod.cotas_vendidas > 0) {
-                                    statusTexto = `${prod.cotas_vendidas} cota(s) comprada(s)`;
-                                }
-                            }
-
-                            card.innerHTML = `
-                                <div>
-                                    <div class="produto-nome">${prod.nome}</div>
-                                    <div class="produto-preco">${precoFormatado}</div>
-                                    <div class="produto-status" style="color: ${statusCor}">${statusTexto}</div>
-                                </div>
-                                <button class="btn-presentear" ${!isDisponivel ? 'disabled' : ''} onclick="abrirModalCompra(${prod.id})">
-                                    ${isDisponivel ? 'Presentear' : 'Esgotado'}
-                                </button>
-                            `;
-                            grid.appendChild(card);
-                        });
-
-                        temaDiv.appendChild(grid);
-                        containerCategorias.appendChild(temaDiv);
-                    }
+                    // Renderiza todos por padrão na primeira carga
+                    renderizarInterfaceDePresentes(todosPresentesDaPlanilha);
                 })
                 .catch(err => {
                     console.error("Erro ao carregar presentes:", err);
@@ -775,6 +761,116 @@
                             <p style="font-size: 0.9rem; margin-top: 10px; font-family: monospace;">${err.message}</p>
                         </div>`;
                 });
+        }
+
+        // Função interna dedicada a estruturar visualmente os presentes agrupados por categoria
+        function renderizarInterfaceDePresentes(listaFiltrada) {
+            const containerCategorias = document.getElementById('lista-presentes-categorias');
+            containerCategorias.innerHTML = '';
+
+            if (listaFiltrada.length === 0) {
+                containerCategorias.innerHTML = '<p style="text-align: center; color: #777; width: 100%; padding: 40px 0;">Nenhum produto disponível para a categoria selecionada.</p>';
+                return;
+            }
+
+            const presentesAgrupados = {};
+
+            listaFiltrada.forEach(prod => {
+                const nomeValido = prod.nome;
+                if (!nomeValido) return; 
+
+                const categoriaValida = prod.categoria || 'Outros Presentes';
+
+                if (!presentesAgrupados[categoriaValida]) {
+                    presentesAgrupados[categoriaValida] = [];
+                }
+
+                presentesAgrupados[categoriaValida].push(prod);
+            });
+
+            for (const categoria in presentesAgrupados) {
+                const temaDiv = document.createElement('div');
+                temaDiv.className = 'tema-section';
+
+                const titulo = document.createElement('h3');
+                titulo.className = 'tema-titulo';
+                titulo.innerText = categoria;
+                temaDiv.appendChild(titulo);
+
+                const grid = document.createElement('div');
+                grid.className = 'produtos-grid';
+
+                presentesAgrupados[categoria].forEach(prod => {
+                    const card = document.createElement('div');
+                    card.className = 'produto-card';
+
+                    const precoExibir = prod.valor_cota > 0 ? prod.valor_cota : prod.valor_total;
+                    const precoFormatado = isNaN(precoExibir) || precoExibir <= 0 
+                        ? 'Cota Livre' 
+                        : `R$ ${precoExibir.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+
+                    let isDisponivel = true;
+                    let statusTexto = 'Disponível';
+                    let statusCor = 'var(--verde-oliva)';
+
+                    if (prod.valor_cota > 0 && prod.valor_total > 0) {
+                        const maxCotas = Math.round(prod.valor_total / prod.valor_cota);
+                        if (prod.cotas_vendidas >= maxCotas) {
+                            isDisponivel = false;
+                            statusTexto = 'Esgotado';
+                            statusCor = '#c0392b';
+                        } else if (prod.cotas_vendidas > 0) {
+                            statusTexto = `${prod.cotas_vendidas} cota(s) comprada(s)`;
+                        }
+                    }
+
+                    card.innerHTML = `
+                        <div>
+                            <div class="produto-nome">${prod.nome}</div>
+                            <div class="produto-preco">${precoFormatado}</div>
+                            <div class="produto-status" style="color: ${statusCor}">${statusTexto}</div>
+                        </div>
+                        <button class="btn-presentear" ${!isDisponivel ? 'disabled' : ''} onclick="abrirModalCompra(${prod.id})">
+                            ${isDisponivel ? 'Presentear' : 'Esgotado'}
+                        </button>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                temaDiv.appendChild(grid);
+                containerCategorias.appendChild(temaDiv);
+            }
+        }
+
+        // Filtra os itens sem realizar novas chamadas à planilha (super veloz!)
+        function filtrarCategoria(categoriaSelecionada) {
+            // Alterna a classe visual de 'active' nos botões de sub-abas
+            const botoes = document.querySelectorAll('.sub-tab-btn');
+            botoes.forEach(btn => {
+                const textoBotao = btn.textContent.trim();
+                
+                if (
+                    (categoriaSelecionada === "Todas" && textoBotao === "Todas") ||
+                    (categoriaSelecionada === "Eletrodomésticos" && textoBotao === "Eletrodomésticos") ||
+                    (categoriaSelecionada === "Móveis" && textoBotao === "Móveis") ||
+                    (categoriaSelecionada === "Cama Mesa e Banho" && textoBotao === "Cama, Mesa e Banho") ||
+                    (categoriaSelecionada === "Utensílios" && textoBotao === "Utensílios") ||
+                    (categoriaSelecionada === "Pets (Thor Tom e Nina)" && textoBotao === "Pets") ||
+                    (categoriaSelecionada === "Lua de Mel" && textoBotao === "Lua de Mel")
+                ) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Filtra os dados localmente
+            if (categoriaSelecionada === 'Todas') {
+                renderizarInterfaceDePresentes(todosPresentesDaPlanilha);
+            } else {
+                const filtrados = todosPresentesDaPlanilha.filter(item => item.categoria === categoriaSelecionada);
+                renderizarInterfaceDePresentes(filtrados);
+            }
         }
 
         // --- CONTROLE DE COMPRA COM MERCADO PAGO ---
@@ -833,60 +929,60 @@
         }
 
         function gerarLinkMercadoPago() {
-    const nomeComprador = document.getElementById('comprador-nome').value.trim();
-    const btnPagamento = document.getElementById('btn-gerar-pix');
-    
-    if (!nomeComprador) {
-        alert("Por favor, digite o seu nome para os noivos saberem quem os presenteou.");
-        return;
-    }
+            const nomeComprador = document.getElementById('comprador-nome').value.trim();
+            const btnPagamento = document.getElementById('btn-gerar-pix');
+            
+            if (!nomeComprador) {
+                alert("Por favor, digite o seu nome para os noivos saberem quem os presenteou.");
+                return;
+            }
 
-    btnPagamento.innerText = "GERANDO LINK DE PAGAMENTO...";
-    btnPagamento.disabled = true;
+            btnPagamento.innerText = "GERANDO LINK DE PAGAMENTO...";
+            btnPagamento.disabled = true;
 
-    const cotas = parseInt(document.getElementById('comprador-cotas').value) || 1;
-    const valorUnitario = presenteSelecionado.valor_cota > 0 ? presenteSelecionado.valor_cota : presenteSelecionado.valor_total;
+            const cotas = parseInt(document.getElementById('comprador-cotas').value) || 1;
+            const valorUnitario = presenteSelecionado.valor_cota > 0 ? presenteSelecionado.valor_cota : presenteSelecionado.valor_total;
 
-    const dadosPagamento = {
-        acao: "criar_pagamento",
-        nome_presente: presenteSelecionado.nome,
-        nome_comprador: nomeComprador,
-        quantidade_cotas: cotas,
-        valor_unitario: valorUnitario
-    };
+            const dadosPagamento = {
+                acao: "criar_pagamento",
+                nome_presente: presenteSelecionado.nome,
+                nome_comprador: nomeComprador,
+                quantidade_cotas: cotas,
+                valor_unitario: valorUnitario
+            };
 
-    // Enviamos como texto simples para evitar que o navegador pré-analise a requisição (CORS preflight)
-    fetch(urlWebhook, {
-        method: "POST",
-        body: JSON.stringify(dadosPagamento)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Erro na rede ou resposta inválida do servidor.");
+            // Enviamos como texto simples para evitar que o navegador pré-analise a requisição (CORS preflight)
+            fetch(urlWebhook, {
+                method: "POST",
+                body: JSON.stringify(dadosPagamento)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erro na rede ou resposta inválida do servidor.");
+                }
+                return response.json();
+            })
+            .then(res => {
+                if (res.result === "success" && res.init_point) {
+                    alert("Link gerado com sucesso! Você será redirecionado para concluir o pagamento de forma segura no Mercado Pago.");
+                    window.location.href = res.init_point; 
+                } else {
+                    throw new Error(res.error || "Erro ao gerar a preferência de pagamento.");
+                }
+            })
+            .catch(error => {
+                console.error("Erro na geração do pagamento:", error);
+                alert(`Não foi possível gerar a transação. Detalhes: ${error.message}\n\nCertifique-se de que salvou e publicou uma 'Nova Versão' do seu Google Apps Script.`);
+            })
+            .finally(() => {
+                btnPagamento.innerText = "IR PARA PAGAMENTO";
+                btnPagamento.disabled = false;
+            });
         }
-        return response.json();
-    })
-    .then(res => {
-        if (res.result === "success" && res.init_point) {
-            alert("Link gerado com sucesso! Você será redirecionado para concluir o pagamento de forma segura no Mercado Pago.");
-            window.location.href = res.init_point; 
-        } else {
-            throw new Error(res.error || "Erro ao gerar a preferência de pagamento.");
-        }
-    })
-    .catch(error => {
-        console.error("Erro na geração do pagamento:", error);
-        alert(`Não foi possível gerar a transação. Detalhes: ${error.message}\n\nCertifique-se de que salvou e publicou uma 'Nova Versão' do seu Google Apps Script.`);
-    })
-    .finally(() => {
-        btnPagamento.innerText = "IR PARA PAGAMENTO";
-        btnPagamento.disabled = false;
-    });
-}
 
         // --- SISTEMA ORIGINAL RSVP ---
         function limparTexto(texto) {
-            return texto
+            return text = texto
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "")
                 .toLowerCase()
