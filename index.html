@@ -713,12 +713,10 @@
             document.getElementById(tabId).classList.add('active');
             buttonElement.classList.add('active');
 
-            // Só tenta carregar ou exibir se clicou na aba de presentes
             if (tabId === 'presentes-panel') {
                 if (!presentesCarregados) {
                     carregarPresentesDaPlanilha();
                 } else {
-                    // Se já carregou antes, garante que exibe a categoria padrão ao alternar de aba
                     filtrarCategoriaInicial();
                 }
             }
@@ -739,15 +737,11 @@
                     return response.text();
                 })
                 .then(textoBruto => {
-                    // --- DIAGNÓSTICO DE ERRO ---
-                    // Isso vai abrir um alerta na sua tela mostrando o que a planilha respondeu.
-                    alert("DADOS RECEBIDOS DA PLANILHA:\n\n" + textoBruto.substring(0, 500));
-                    
                     let produtos;
                     try {
                         produtos = JSON.parse(textoBruto);
                     } catch (e) {
-                        throw new Error(`O retorno não é um JSON válido. Veja se o Apps Script não está retornando uma página de erro do Google.`);
+                        throw new Error(`O retorno não é um JSON válido.`);
                     }
 
                     loading.style.display = 'none';
@@ -762,11 +756,17 @@
                         return;
                     }
 
-                    // Filtra apenas os presentes ativos
-                    todosPresentesDaPlanilha = produtos.filter(item => String(item.ativo).toUpperCase() === 'TRUE');
+                    // CORREÇÃO AQUI: Se 'ativo' não vier na planilha, assume TRUE por padrão para não ocultar os itens
+                    todosPresentesDaPlanilha = produtos.filter(item => {
+                        if (item.ativo === undefined || item.ativo === null) {
+                            return true; // Se a coluna não existe, exibe o produto
+                        }
+                        return String(item.ativo).toUpperCase() === 'TRUE';
+                    });
+
                     window.listaGlobalPresentes = todosPresentesDaPlanilha;
 
-                    // Executa o filtro inicial após receber os dados
+                    // Executa o filtro inicial
                     filtrarCategoriaInicial();
                 })
                 .catch(err => {
@@ -780,20 +780,16 @@
                 });
         }
 
-        // Função auxiliar para garantir que o primeiro filtro ocorra somente com dados em mãos
         function filtrarCategoriaInicial() {
             const abaAtiva = document.querySelector('.gift-tab-item.active');
             if (abaAtiva) {
-                // Simula o clique/filtro na aba que já está marcada visualmente como ativa (Eletrodomésticos)
                 abaAtiva.click();
             } else {
-                // Caso nenhuma esteja marcada por garantia, busca Eletrodomésticos
                 const btnEletro = document.querySelector('.gift-tab-item');
                 if (btnEletro) btnEletro.click();
             }
         }
 
-        // Função de normalização para comparar categorias sem quebrar por acentos, maiúsculas ou textos extras (ex: Pets)
         function normalizarTexto(texto) {
             if (!texto) return "";
             return texto
@@ -804,7 +800,6 @@
         }
 
         function filtrarCategoria(categoriaSelecionada, elementoBotao) {
-            // Remove a classe ativa de todos os botões e adiciona no clicado
             document.querySelectorAll('.gift-tab-item').forEach(aba => {
                 aba.classList.remove('active');
             });
@@ -812,7 +807,6 @@
 
             const termoFiltro = normalizarTexto(categoriaSelecionada);
 
-            // Filtro flexível: Verifica se o nome da categoria na planilha contém ou é contido pelo termo selecionado
             const filtrados = todosPresentesDaPlanilha.filter(item => {
                 const categoriaItem = normalizarTexto(item.categoria);
                 return categoriaItem.includes(termoFiltro) || termoFiltro.includes(categoriaItem);
