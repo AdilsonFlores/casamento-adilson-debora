@@ -694,14 +694,12 @@
     <footer>
         <p>© 2026 Casamento Adilson & Débora. Todos os direitos reservados.</p>
     </footer>
-
-    <script>
+<script>
         const urlWebhook = "https://script.google.com/macros/s/AKfycbyFWvs29R7VWbTlGAZu8ZJZqxnca7nPocyaFXxDQN0oJXNAYTmCM9wIGq754NGWtR2aiw/exec";
 
         let dadosGrupoAtual = null;
         let presentesCarregados = false;
         let presenteSelecionado = null; 
-        
         let todosPresentesDaPlanilha = []; 
 
         function switchTab(tabId, buttonElement) {
@@ -715,8 +713,14 @@
             document.getElementById(tabId).classList.add('active');
             buttonElement.classList.add('active');
 
-            if (tabId === 'presentes-panel' && !presentesCarregados) {
-                carregarPresentesDaPlanilha();
+            // Só tenta carregar ou exibir se clicou na aba de presentes
+            if (tabId === 'presentes-panel') {
+                if (!presentesCarregados) {
+                    carregarPresentesDaPlanilha();
+                } else {
+                    // Se já carregou antes, garante que exibe a categoria padrão ao alternar de aba
+                    filtrarCategoriaInicial();
+                }
             }
         }
 
@@ -754,14 +758,12 @@
                         return;
                     }
 
+                    // Filtra apenas os presentes ativos
                     todosPresentesDaPlanilha = produtos.filter(item => String(item.ativo).toUpperCase() === 'TRUE');
-                    
                     window.listaGlobalPresentes = todosPresentesDaPlanilha;
 
-                    // Exibir inicialmente os itens de 'Eletrodomésticos'
-                    const primeiraCategoriaAtiva = 'Eletrodomésticos';
-                    const filtradosIniciais = todosPresentesDaPlanilha.filter(item => item.categoria === primeiraCategoriaAtiva);
-                    renderizarInterfaceDePresentes(filtradosIniciais);
+                    // Após os dados de fato chegarem do servidor, roda o filtro inicial
+                    filtrarCategoriaInicial();
                 })
                 .catch(err => {
                     console.error("Erro ao carregar presentes:", err);
@@ -774,12 +776,53 @@
                 });
         }
 
-        function renderizarInterfaceDePresentes(listaFiltrada) {
+        // Função auxiliar para garantir que o primeiro filtro ocorra somente com dados em mãos
+        function filtrarCategoriaInicial() {
+            const abaAtiva = document.querySelector('.gift-tab-item.active');
+            if (abaAtiva) {
+                // Simula o clique/filtro na aba que já está marcada visualmente como ativa (Eletrodomésticos)
+                abaAtiva.click();
+            } else {
+                // Caso nenhuma esteja marcada por garantia, busca Eletrodomésticos
+                const btnEletro = document.querySelector('.gift-tab-item');
+                if (btnEletro) btnEletro.click();
+            }
+        }
+
+        // Função de normalização para comparar categorias sem quebrar por acentos, maiúsculas ou textos extras (ex: Pets)
+        function normalizarTexto(texto) {
+            if (!texto) return "";
+            return texto
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .trim();
+        }
+
+        function filtrarCategoria(categoriaSelecionada, elementoBotao) {
+            // Remove a classe ativa de todos os botões e adiciona no clicado
+            document.querySelectorAll('.gift-tab-item').forEach(aba => {
+                aba.classList.remove('active');
+            });
+            elementoBotao.classList.add('active');
+
+            const termoFiltro = normalizarTexto(categoriaSelecionada);
+
+            // Filtro flexível: Verifica se o nome da categoria na planilha contém ou é contido pelo termo selecionado
+            const filtrados = todosPresentesDaPlanilha.filter(item => {
+                const categoriaItem = normalizarTexto(item.categoria);
+                return categoriaItem.includes(termoFiltro) || termoFiltro.includes(categoriaItem);
+            });
+
+            renderizarInterfaceDePresentes(filtrados, categoriaSelecionada);
+        }
+
+        function renderizarInterfaceDePresentes(listaFiltrada, nomeCategoria) {
             const containerCategorias = document.getElementById('lista-presentes-categorias');
             containerCategorias.innerHTML = '';
 
             if (listaFiltrada.length === 0) {
-                containerCategorias.innerHTML = '<p style="text-align: center; color: #777; width: 100%; padding: 40px 0;">Nenhum produto disponível para a categoria selecionada.</p>';
+                containerCategorias.innerHTML = `<p style="text-align: center; color: #777; width: 100%; padding: 40px 0;">Nenhum produto disponível para a categoria "${nomeCategoria}".</p>`;
                 return;
             }
 
@@ -852,16 +895,6 @@
             }
         }
 
-        function filtrarCategoria(categoriaSelecionada, elementoBotao) {
-            document.querySelectorAll('.gift-tab-item').forEach(aba => {
-                aba.classList.remove('active');
-            });
-            elementoBotao.classList.add('active');
-
-            const filtrados = todosPresentesDaPlanilha.filter(item => item.categoria === categoriaSelecionada);
-            renderizarInterfaceDePresentes(filtrados);
-        }
-
         // --- CONTROLE DE COMPRA COM MERCADO PAGO ---
         function abrirModalCompra(idPresente) {
             if (!window.listaGlobalPresentes) return;
@@ -897,7 +930,7 @@
             presenteSelecionado = null;
         }
 
-        function actualizarTotalModal() {
+        function atualizarTotalModal() {
             if (!presenteSelecionado) return;
 
             const inputCotas = document.getElementById('comprador-cotas');
@@ -1089,7 +1122,7 @@
                 body: JSON.stringify(dadosParaEnviar)
             })
             .then(() => {
-                exibirMensagem("Confirmação updated com sucesso! Muito obrigado.", "#155724", "#d4edda", true);
+                exibirMensagem("Confirmação atualizada com sucesso! Muito obrigado.", "#155724", "#d4edda", true);
                 document.getElementById('family-panel').style.display = 'none';
                 document.getElementById('guest-search').value = '';
                 dadosGrupoAtual = null;
