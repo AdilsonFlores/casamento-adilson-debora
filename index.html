@@ -734,16 +734,20 @@
             fetch(`${urlWebhook}?tipo=presentes`)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error(`O servidor retornou um status inválido HTTP: ${response.status}`);
+                        throw new Error(`Erro HTTP: ${response.status}`);
                     }
                     return response.text();
                 })
                 .then(textoBruto => {
+                    // --- DIAGNÓSTICO DE ERRO ---
+                    // Isso vai abrir um alerta na sua tela mostrando o que a planilha respondeu.
+                    alert("DADOS RECEBIDOS DA PLANILHA:\n\n" + textoBruto.substring(0, 500));
+                    
                     let produtos;
                     try {
                         produtos = JSON.parse(textoBruto);
                     } catch (e) {
-                        throw new Error(`A planilha não retornou um JSON válido. Retorno: "${textoBruto.substring(0, 150)}..."`);
+                        throw new Error(`O retorno não é um JSON válido. Veja se o Apps Script não está retornando uma página de erro do Google.`);
                     }
 
                     loading.style.display = 'none';
@@ -762,7 +766,7 @@
                     todosPresentesDaPlanilha = produtos.filter(item => String(item.ativo).toUpperCase() === 'TRUE');
                     window.listaGlobalPresentes = todosPresentesDaPlanilha;
 
-                    // Após os dados de fato chegarem do servidor, roda o filtro inicial
+                    // Executa o filtro inicial após receber os dados
                     filtrarCategoriaInicial();
                 })
                 .catch(err => {
