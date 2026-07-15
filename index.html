@@ -547,6 +547,25 @@
             border-radius: 6px;
             margin: 15px 0;
         }
+		/* --- ESTILIZAÇÃO DAS IMAGENS DOS PRESENTES --- */
+        .produto-foto-container {
+            width: 100%;
+            height: 120px; /* Altura ideal para ilustrações minimalistas */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            background-color: rgba(107, 142, 35, 0.03); /* Toque bem sutil de verde oliva no fundo */
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .produto-foto {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.05)); /* Sombra suave para dar profundidade */
+        }
     </style>
 </head>
 <body>
@@ -875,15 +894,27 @@
                         }
                     }
 
+                    // Define o caminho da imagem dinâmica vinda da planilha. 
+                    // Se a imagem na planilha for "geladeira.svg", o caminho final será "Imagens/geladeira.svg"
+                    const caminhoImagem = prod.imagem ? `Imagens/${prod.imagem}` : '';
+
+                    // Montagem do Card com a foto inclusa no topo
                     card.innerHTML = `
-                        <div>
-                            <div class="produto-nome">${prod.nome}</div>
-                            <div class="produto-preco">${precoFormatado}</div>
-                            <div class="produto-status" style="color: ${statusCor}">${statusTexto}</div>
+                        ${caminhoImagem ? `
+                        <div class="produto-foto-container" id="container-foto-${prod.id}">
+                            <img src="${caminhoImagem}" alt="${prod.nome}" class="produto-foto" onerror="document.getElementById('container-foto-${prod.id}').style.display='none'">
                         </div>
-                        <button class="btn-presentear" ${!isDisponivel ? 'disabled' : ''} onclick="abrirModalCompra(${prod.id})">
-                            ${isDisponivel ? 'Presentear' : 'Esgotado'}
-                        </button>
+                        ` : ''}
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div class="produto-nome">${prod.nome}</div>
+                                <div class="produto-preco">${precoFormatado}</div>
+                                <div class="produto-status" style="color: ${statusCor}">${statusTexto}</div>
+                            </div>
+                            <button class="btn-presentear" ${!isDisponivel ? 'disabled' : ''} onclick="abrirModalCompra(${prod.id})" style="margin-top: 15px;">
+                                ${isDisponivel ? 'Presentear' : 'Esgotado'}
+                            </button>
+                        </div>
                     `;
                     grid.appendChild(card);
                 });
@@ -1146,6 +1177,7 @@
                 msgBox.style.display = 'none';
             }
         }
+    
     </script>
 </body>
 </html>
