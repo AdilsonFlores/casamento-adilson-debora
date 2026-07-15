@@ -305,7 +305,7 @@
             margin-top: 60px;
         }
 
-        /* Sistema de Abas Principais */
+        /* Sistema de Abas (Menu Principal e Categorias) */
         .tabs-container {
             display: flex;
             justify-content: center;
@@ -336,6 +336,43 @@
             border-bottom-color: var(--verde-oliva);
         }
 
+        /* Abas Internas de Presentes (Layout de Tabela) */
+        .gift-tabs-table {
+            display: flex;
+            justify-content: center;
+            border-bottom: 2px solid var(--verde-oliva);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .gift-tab-item {
+            background: none;
+            border: none;
+            padding: 10px 18px;
+            font-family: 'Georgia', serif;
+            font-size: 0.95rem;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .gift-tab-item:hover {
+            color: var(--verde-oliva);
+            background-color: rgba(107, 124, 60, 0.04);
+        }
+
+        .gift-tab-item.active {
+            color: var(--verde-escuro);
+            border-bottom: 3px solid var(--verde-escuro);
+            background-color: var(--verde-claro);
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
         .tab-content {
             display: none;
         }
@@ -344,44 +381,10 @@
             display: block;
         }
 
-        /* --- SUB-ABAS (Filtro por Categorias de Presentes) --- */
-        .sub-tabs-categorias {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .sub-tab-btn {
-            background-color: var(--branco);
-            color: var(--verde-oliva);
-            border: 1px solid rgba(107, 124, 60, 0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-family: 'Georgia', serif;
-            font-size: 0.85rem;
-            font-weight: bold;
-            transition: all 0.2s ease;
-        }
-
-        .sub-tab-btn:hover {
-            background-color: var(--verde-claro);
-            color: var(--verde-escuro);
-        }
-
-        .sub-tab-btn.active {
-            background-color: var(--verde-oliva);
-            color: var(--branco);
-            border-color: var(--verde-oliva);
-            box-shadow: 0 2px 6px rgba(107, 124, 60, 0.2);
-        }
-
         /* Temas e Cards de Produtos */
         .tema-section {
             margin-top: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .tema-titulo {
@@ -573,7 +576,7 @@
                     <p style="font-size: 1.1rem; margin-bottom: 5px;"><strong>Esporte Fino</strong></p>
                     
                     <div class="traje-text">
-                        <p>Queremos que todos se sintam confortáveis para comemorar conosco! Sugerimos um style arrumado, mas sem complicações:</p>
+                        <p>Queremos que todos se sintam confortáveis para comemorar conosco! Sugerimos um estilo arrumado, mas sem complicações:</p>
                         <ul>
                             <li><strong>Para eles:</strong> Camisa de botão (manga longa ou curta) e calça comprida (sarja, social ou jeans escuro). <em style="color: var(--verde-escuro);">Não é necessário usar terno nem gravata!</em></li>
                             <li><strong>Para elas:</strong> Vestidos leves (curtos ou midis), saias com blusas elegantes ou macacões confortáveis.</li>
@@ -635,15 +638,14 @@
             <div id="presentes-panel" class="tab-content">
                 <p style="text-align: center; margin-bottom: 30px;">Sua presença é o nosso maior presente! Caso deseje nos abençoar com algo a mais, escolha um item da nossa lista abaixo:</p>
                 
-                <!-- Sub-Abas de Categoria (Filtros) -->
-                <div class="sub-tabs-categorias">
-                    <button class="sub-tab-btn active" onclick="filtrarCategoria('Todas')">Todas</button>
-                    <button class="sub-tab-btn" onclick="filtrarCategoria('Eletrodomésticos')">Eletrodomésticos</button>
-                    <button class="sub-tab-btn" onclick="filtrarCategoria('Móveis')">Móveis</button>
-                    <button class="sub-tab-btn" onclick="filtrarCategoria('Cama Mesa e Banho')">Cama, Mesa e Banho</button>
-                    <button class="sub-tab-btn" onclick="filtrarCategoria('Utensílios')">Utensílios</button>
-                    <button class="sub-tab-btn" onclick="filtrarCategoria('Pets (Thor Tom e Nina)')">Pets</button>
-                    <button class="sub-tab-btn" onclick="filtrarCategoria('Lua de Mel')">Lua de Mel</button>
+                <!-- Abas em Formato de Tabela para as Categorias -->
+                <div class="gift-tabs-table">
+                    <button class="gift-tab-item active" onclick="filtrarCategoria('Eletrodomésticos', this)">Eletrodomésticos</button>
+                    <button class="gift-tab-item" onclick="filtrarCategoria('Móveis', this)">Móveis</button>
+                    <button class="gift-tab-item" onclick="filtrarCategoria('Cama Mesa e Banho', this)">Cama, Mesa e Banho</button>
+                    <button class="gift-tab-item" onclick="filtrarCategoria('Utensílios', this)">Utensílios</button>
+                    <button class="gift-tab-item" onclick="filtrarCategoria('Pets (Thor Tom e Nina)', this)">Pets</button>
+                    <button class="gift-tab-item" onclick="filtrarCategoria('Lua de Mel', this)">Lua de Mel</button>
                 </div>
 
                 <div id="loading-presentes" class="loading-gifts" style="display: none;">Carregando opções de presentes...</div>
@@ -749,8 +751,10 @@
                     // Salva globalmente os presentes para fácil acesso no clique
                     window.listaGlobalPresentes = todosPresentesDaPlanilha;
 
-                    // Renderiza todos por padrão na primeira carga
-                    renderizarInterfaceDePresentes(todosPresentesDaPlanilha);
+                    // Inicia diretamente exibindo a categoria 'Eletrodomésticos'
+                    const primeiraCategoriaAtiva = 'Eletrodomésticos';
+                    const filtradosIniciais = todosPresentesDaPlanilha.filter(item => item.categoria === primeiraCategoriaAtiva);
+                    renderizarInterfaceDePresentes(filtradosIniciais);
                 })
                 .catch(err => {
                     console.error("Erro ao carregar presentes:", err);
@@ -842,35 +846,17 @@
             }
         }
 
-        // Filtra os itens sem realizar novas chamadas à planilha (super veloz!)
-        function filtrarCategoria(categoriaSelecionada) {
-            // Alterna a classe visual de 'active' nos botões de sub-abas
-            const botoes = document.querySelectorAll('.sub-tab-btn');
-            botoes.forEach(btn => {
-                const textoBotao = btn.textContent.trim();
-                
-                if (
-                    (categoriaSelecionada === "Todas" && textoBotao === "Todas") ||
-                    (categoriaSelecionada === "Eletrodomésticos" && textoBotao === "Eletrodomésticos") ||
-                    (categoriaSelecionada === "Móveis" && textoBotao === "Móveis") ||
-                    (categoriaSelecionada === "Cama Mesa e Banho" && textoBotao === "Cama, Mesa e Banho") ||
-                    (categoriaSelecionada === "Utensílios" && textoBotao === "Utensílios") ||
-                    (categoriaSelecionada === "Pets (Thor Tom e Nina)" && textoBotao === "Pets") ||
-                    (categoriaSelecionada === "Lua de Mel" && textoBotao === "Lua de Mel")
-                ) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
+        // Filtra os itens mudando o estado visual das abas de tabela
+        function filtrarCategoria(categoriaSelecionada, elementoBotao) {
+            // Alterna a classe 'active' nas abas da tabela de presentes
+            document.querySelectorAll('.gift-tab-item').forEach(aba => {
+                aba.classList.remove('active');
             });
+            elementoBotao.classList.add('active');
 
             // Filtra os dados localmente
-            if (categoriaSelecionada === 'Todas') {
-                renderizarInterfaceDePresentes(todosPresentesDaPlanilha);
-            } else {
-                const filtrados = todosPresentesDaPlanilha.filter(item => item.categoria === categoriaSelecionada);
-                renderizarInterfaceDePresentes(filtrados);
-            }
+            const filtrados = todosPresentesDaPlanilha.filter(item => item.categoria === categoriaSelecionada);
+            renderizarInterfaceDePresentes(filtrados);
         }
 
         // --- CONTROLE DE COMPRA COM MERCADO PAGO ---
@@ -982,7 +968,7 @@
 
         // --- SISTEMA ORIGINAL RSVP ---
         function limparTexto(texto) {
-            return text = texto
+            return texto
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "")
                 .toLowerCase()
