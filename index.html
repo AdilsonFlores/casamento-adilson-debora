@@ -328,7 +328,7 @@
             <p class="descricao" title="${presente.descricao}">${presente.descricao}</p>
             <div class="card-footer">
               <div class="valor">R$ ${Number(presente.valor_cota).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-              <button class="btn-presentear" onclick="comprarCota(${presente.id}, '${presente.nome.replace(/'/g, "\\'")}', ${presente.valor_cota})">Presentear</button>
+              <button class="btn-presentear" onclick="comprarCota(event, ${presente.id}, '${presente.nome.replace(/'/g, "\\'")}', ${presente.valor_cota})">Presentear</button>
             </div>
           </div>
         `;
@@ -371,7 +371,7 @@
     }
 
     // Integração de pagamento com o Google Apps Script e Mercado Pago
-    async function comprarCota(idPresente, nomePresente, valorCota) {
+    async function comprarCota(event, idPresente, nomePresente, valorCota) {
       // 1. Abre uma caixinha solicitando o nome de quem está presenteando (opcional, mas o script pede)
       const nomeComprador = prompt("Por favor, digite seu nome completo para colocar no cartão do presente:", "");
       if (nomeComprador === null) return; // Se o usuário cancelar, interrompe a compra
