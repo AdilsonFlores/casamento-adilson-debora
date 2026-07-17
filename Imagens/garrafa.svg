@@ -1,0 +1,40 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+
+  <g stroke="#6B7D4E" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Tampa -->
+    <rect x="210" y="82" width="92" height="38" rx="10"></rect>
+
+    <!-- Gargalo -->
+    <path d="
+      M222 120
+      V152
+      C222 165 232 176 245 176
+      H267
+      C280 176 290 165 290 152
+      V120"></path>
+
+    <!-- Corpo -->
+    <path d="
+      M196 176
+      H316
+      V360
+      C316 392 290 418 256 418
+      C222 418 196 392 196 360
+      Z"></path>
+
+    <!-- Linha decorativa -->
+    <path d="M196 230 H316"></path>
+
+    <!-- Base -->
+    <path d="M216 418 H296"></path>
+
+    <!-- Reflexo -->
+    <path d="
+      M228 205
+      V345"></path>
+
+  </g>
+
+</svg>

@@ -1,0 +1,44 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+
+  <g stroke="#6B7D4E" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Caminha -->
+    <path d="
+      M95 285
+      C95 225 145 185 210 185
+      H302
+      C367 185 417 225 417 285
+      V335
+      C417 370 389 398 354 398
+      H158
+      C123 398 95 370 95 335
+      Z"></path>
+
+    <!-- Almofada -->
+    <path d="
+      M155 285
+      C180 255 332 255 357 285"></path>
+
+    <!-- Costura -->
+    <path d="M165 335 H347"></path>
+
+    <!-- Coroa -->
+    <path d="
+      M182 145
+      L205 108
+      L235 140
+      L256 100
+      L277 140
+      L307 108
+      L330 145
+      Z"></path>
+
+    <!-- Joias da coroa -->
+    <circle cx="205" cy="108" r="4"></circle>
+    <circle cx="256" cy="100" r="4"></circle>
+    <circle cx="307" cy="108" r="4"></circle>
+
+  </g>
+
+</svg>

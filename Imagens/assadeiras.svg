@@ -1,0 +1,32 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+
+  <g stroke="#6B7D4E" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Tampa -->
+    <path d="
+      M140 205
+      Q256 120 372 205"></path>
+
+    <!-- Puxador -->
+    <circle cx="256" cy="152" r="12"></circle>
+    <line x1="256" y1="164" x2="256" y2="178"></line>
+
+    <!-- Borda da tampa -->
+    <path d="
+      M150 205
+      H362"></path>
+
+    <!-- Base da assadeira -->
+    <rect x="120" y="205" width="272" height="150" rx="26"></rect>
+
+    <!-- Borda interna (efeito vidro) -->
+    <rect x="142" y="227" width="228" height="106" rx="14"></rect>
+
+    <!-- Alças -->
+    <path d="M120 245 H95"></path>
+    <path d="M392 245 H417"></path>
+
+  </g>
+
+</svg>

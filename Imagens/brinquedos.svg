@@ -1,0 +1,28 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+
+  <g stroke="#6B7D4E" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Bola -->
+    <circle cx="170" cy="180" r="52"></circle>
+    <path d="M170 128 C145 150 145 210 170 232"></path>
+    <path d="M170 128 C195 150 195 210 170 232"></path>
+    <path d="M118 180 H222"></path>
+
+    <!-- Corda -->
+    <path d="
+      M240 275
+      C265 250 300 250 325 275
+      C350 300 385 300 410 275"></path>
+
+    <circle cx="230" cy="285" r="16"></circle>
+    <circle cx="420" cy="285" r="16"></circle>
+
+    <!-- Frisbee -->
+    <ellipse cx="256" cy="385" rx="90" ry="24"></ellipse>
+
+    <ellipse cx="256" cy="385" rx="56" ry="10"></ellipse>
+
+  </g>
+
+</svg>

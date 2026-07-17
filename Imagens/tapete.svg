@@ -1,0 +1,42 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+
+  <g stroke="#6B7D4E" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Tapete -->
+    <rect x="110" y="110" width="292" height="292" rx="24"></rect>
+
+    <!-- Borda interna -->
+    <rect x="138" y="138" width="236" height="236" rx="14"></rect>
+
+    <!-- Centro absorvente -->
+    <path d="
+      M180 170
+      V342"></path>
+
+    <path d="
+      M256 170
+      V342"></path>
+
+    <path d="
+      M332 170
+      V342"></path>
+
+    <path d="
+      M170 210
+      H342"></path>
+
+    <path d="
+      M170 302
+      H342"></path>
+
+    <!-- Gota -->
+    <path d="
+      M256 220
+      C278 250 278 274 256 292
+      C234 274 234 250 256 220
+      Z"></path>
+
+  </g>
+
+</svg>

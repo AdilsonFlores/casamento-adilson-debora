@@ -1,0 +1,48 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+
+  <g stroke="#6B7D4E" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Parede -->
+    <path d="M120 95 V390"></path>
+    <path d="M120 95 H410"></path>
+
+    <!-- Prateleiras -->
+    <path d="M120 170 H250"></path>
+    <path d="M120 255 H320"></path>
+    <path d="M120 340 H275"></path>
+
+    <!-- Plataforma superior -->
+    <circle cx="250" cy="170" r="18"></circle>
+
+    <!-- Plataforma central -->
+    <circle cx="320" cy="255" r="18"></circle>
+
+    <!-- Plataforma inferior -->
+    <circle cx="275" cy="340" r="18"></circle>
+
+    <!-- Gato -->
+    <g transform="translate(300 120)">
+      <!-- Cabeça -->
+      <circle cx="55" cy="55" r="24"></circle>
+
+      <!-- Orelhas -->
+      <path d="M39 37 L30 18 L49 28"></path>
+      <path d="M71 37 L80 18 L61 28"></path>
+
+      <!-- Corpo -->
+      <path d="
+        M38 77
+        C38 112 55 132 82 132
+        H98"></path>
+
+      <!-- Cauda -->
+      <path d="
+        M98 132
+        C120 132 126 112 116 96"></path>
+
+    </g>
+
+  </g>
+
+</svg>
