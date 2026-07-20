@@ -1,0 +1,61 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none">
+
+  <g stroke="#6B7D4E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Colosseum -->
+    <path d="M136 344
+             Q136 188 256 188
+             Q376 188 376 344"></path>
+
+    <path d="M156 344
+             V228
+             Q156 208 176 208
+             H336
+             Q356 208 356 228
+             V344"></path>
+
+    <!-- Upper arches -->
+    <path d="M186 236
+             Q196 220 206 236
+             V268
+             H186
+             Z"></path>
+
+    <path d="M236 236
+             Q246 220 256 236
+             V268
+             H236
+             Z"></path>
+
+    <path d="M286 236
+             Q296 220 306 236
+             V268
+             H286
+             Z"></path>
+
+    <!-- Lower arches -->
+    <path d="M176 284
+             Q190 264 204 284
+             V344
+             H176
+             Z"></path>
+
+    <path d="M228 284
+             Q242 264 256 284
+             V344
+             H228
+             Z"></path>
+
+    <path d="M280 284
+             Q294 264 308 284
+             V344
+             H280
+             Z"></path>
+
+    <!-- Ground -->
+    <path d="M120 344 H392"></path>
+
+  </g>
+
+</svg>

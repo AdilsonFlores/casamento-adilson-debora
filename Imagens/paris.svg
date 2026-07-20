@@ -1,0 +1,40 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none">
+
+  <g stroke="#6B7D4E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Eiffel Tower -->
+    <path d="M256 118
+             L316 382
+             H196
+             Z"></path>
+
+    <!-- Base -->
+    <path d="M170 382 H342"></path>
+
+    <!-- First level -->
+    <path d="M214 310 H298"></path>
+
+    <!-- Second level -->
+    <path d="M228 246 H284"></path>
+
+    <!-- Central opening -->
+    <path d="M238 382
+             Q256 346 274 382"></path>
+
+    <!-- Internal structure -->
+    <path d="M222 310 L290 382"></path>
+    <path d="M290 310 L222 382"></path>
+
+    <path d="M236 246 L276 310"></path>
+    <path d="M276 246 L236 310"></path>
+
+    <path d="M246 118 L214 246"></path>
+    <path d="M266 118 L298 246"></path>
+
+    <!-- Top -->
+    <path d="M256 96 V118"></path>
+
+  </g>
+
+</svg>

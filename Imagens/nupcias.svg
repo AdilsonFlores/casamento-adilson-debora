@@ -1,0 +1,58 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none">
+
+  <g stroke="#6B7D4E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Champagne bottle -->
+    <path d="M214 122
+             H298"></path>
+
+    <path d="M236 122
+             V168
+             C236 186 224 202 214 216
+             C202 232 196 250 196 272
+             V366
+             C196 388 214 406 236 406
+             H276
+             C298 406 316 388 316 366
+             V272
+             C316 250 310 232 298 216
+             C288 202 276 186 276 168
+             V122"></path>
+
+    <!-- Bottle neck -->
+    <path d="M246 96 H266"></path>
+    <path d="M246 96 V122"></path>
+    <path d="M266 96 V122"></path>
+
+    <!-- Label -->
+    <rect x="218" y="254" width="76" height="58" rx="10"></rect>
+
+    <!-- Glasses -->
+    <path d="M118 176
+             H158
+             C158 206 150 228 138 242
+             C126 228 118 206 118 176
+             Z"></path>
+
+    <path d="M138 242
+             V314"></path>
+
+    <path d="M122 330
+             H154"></path>
+
+    <path d="M354 176
+             H394
+             C394 206 386 228 374 242
+             C362 228 354 206 354 176
+             Z"></path>
+
+    <path d="M374 242
+             V314"></path>
+
+    <path d="M358 330
+             H390"></path>
+
+  </g>
+
+</svg>

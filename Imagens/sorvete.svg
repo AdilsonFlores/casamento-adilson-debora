@@ -1,0 +1,34 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none">
+
+  <g stroke="#6B7D4E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Ice cream scoop -->
+    <path d="
+      M196 212
+      C196 176 223 148 256 148
+      C289 148 316 176 316 212
+      C316 245 289 272 256 272
+      C223 272 196 245 196 212
+      Z"></path>
+
+    <!-- Scoop detail -->
+    <path d="M218 194
+             Q256 174 294 194"></path>
+
+    <!-- Cone -->
+    <path d="M214 270
+             L256 380
+             L298 270
+             Z"></path>
+
+    <!-- Cone texture -->
+    <path d="M230 304 L282 356"></path>
+    <path d="M282 304 L230 356"></path>
+
+    <path d="M238 286 L290 338"></path>
+    <path d="M274 286 L222 338"></path>
+
+  </g>
+
+</svg>

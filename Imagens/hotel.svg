@@ -1,0 +1,39 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none">
+
+  <g stroke="#6B7D4E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Hotel building -->
+    <rect x="156" y="112" width="200" height="288" rx="16"></rect>
+
+    <!-- Roof -->
+    <path d="M140 112 H372"></path>
+
+    <!-- Hotel sign -->
+    <rect x="216" y="132" width="80" height="38" rx="8"></rect>
+    <path d="M236 143 V159"></path>
+    <path d="M276 143 V159"></path>
+    <path d="M236 151 H276"></path>
+
+    <!-- Windows -->
+    <rect x="184" y="190" width="28" height="28" rx="4"></rect>
+    <rect x="242" y="190" width="28" height="28" rx="4"></rect>
+    <rect x="300" y="190" width="28" height="28" rx="4"></rect>
+
+    <rect x="184" y="242" width="28" height="28" rx="4"></rect>
+    <rect x="242" y="242" width="28" height="28" rx="4"></rect>
+    <rect x="300" y="242" width="28" height="28" rx="4"></rect>
+
+    <rect x="184" y="294" width="28" height="28" rx="4"></rect>
+    <rect x="242" y="294" width="28" height="28" rx="4"></rect>
+    <rect x="300" y="294" width="28" height="28" rx="4"></rect>
+
+    <!-- Door -->
+    <path d="M232 400 V340
+             Q232 324 256 324
+             Q280 324 280 340
+             V400"></path>
+
+  </g>
+
+</svg>

@@ -1,0 +1,37 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none">
+
+  <g stroke="#6B7D4E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Ticket -->
+    <path d="
+      M120 176
+      H392
+      C392 193 406 206 424 206
+      V306
+      C406 306 392 319 392 336
+      H120
+      C120 319 106 306 88 306
+      V206
+      C106 206 120 193 120 176
+      Z"></path>
+
+    <!-- Perforation -->
+    <path d="M256 176 V336" stroke-dasharray="8 8"></path>
+
+    <!-- Airplane -->
+    <path d="M215 256
+             L300 228
+             L286 250
+             L340 256
+             L286 262
+             L300 284
+             Z"></path>
+
+    <!-- Wing -->
+    <path d="M250 248 L222 224"></path>
+    <path d="M250 264 L222 288"></path>
+
+  </g>
+
+</svg>
