@@ -27,22 +27,31 @@
             line-height: 1.6;
         }
 
-        header {
-            text-align: center;
-            padding: 60px 20px;
-            background-color: var(--verde-claro);
-            border-bottom: 3px solid var(--verde-oliva);
-        }
+		header {
+		    text-align: center;
+		    padding: 40px 20px; /* Reduzimos levemente o padding no topo/base para mobile */
+		    background-color: var(--verde-claro);
+		    border-bottom: 3px solid var(--verde-oliva);
+		    width: 100%;       /* Garante que o header ocupe 100% da largura */
+		    overflow: hidden;  /* Evita que qualquer elemento vaze pelas bordas */
+		}
+		
+		.logo-box {
+		    margin-bottom: 20px;
+		    width: 100%;
+		    display: flex;
+		    justify-content: center; /* Garante alinhamento flex centralizado */
+		    align-items: center;
+		}
 
-        .logo-box {
-            margin-bottom: 20px;
-        }
-
-        .logo-img {
-            max-width: 400px;
-            height: auto;
-            mix-blend-mode: multiply; 
-        }
+		.logo-img {
+		    max-width: 280px; /* Reduzimos um pouco para caber perfeitamente no mobile */
+		    width: 100%;       /* Garante que a imagem se ajuste se a tela for muito pequena */
+		    height: auto;
+		    display: block;    /* Transforma a imagem em bloco para permitir centralização perfeita */
+		    margin: 0 auto;    /* Centraliza a imagem na horizontal */
+		    mix-blend-mode: multiply; 
+		}
 
         h1 {
             font-size: 2.8rem;
