@@ -27,31 +27,31 @@
             line-height: 1.6;
         }
 
-		header {
-		    text-align: center;
-		    padding: 40px 20px; /* Reduzimos levemente o padding no topo/base para mobile */
-		    background-color: var(--verde-claro);
-		    border-bottom: 3px solid var(--verde-oliva);
-		    width: 100%;       /* Garante que o header ocupe 100% da largura */
-		    overflow: hidden;  /* Evita que qualquer elemento vaze pelas bordas */
-		}
-		
-		.logo-box {
-		    margin-bottom: 20px;
-		    width: 100%;
-		    display: flex;
-		    justify-content: center; /* Garante alinhamento flex centralizado */
-		    align-items: center;
-		}
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: var(--verde-claro);
+            border-bottom: 3px solid var(--verde-oliva);
+            width: 100%;
+            overflow: hidden;
+        }
 
-		.logo-img {
-		    max-width: 280px; /* Reduzimos um pouco para caber perfeitamente no mobile */
-		    width: 100%;       /* Garante que a imagem se ajuste se a tela for muito pequena */
-		    height: auto;
-		    display: block;    /* Transforma a imagem em bloco para permitir centralização perfeita */
-		    margin: 0 auto;    /* Centraliza a imagem na horizontal */
-		    mix-blend-mode: multiply; 
-		}
+        .logo-box {
+            margin-bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-img {
+            max-width: 280px;
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            mix-blend-mode: multiply; 
+        }
 
         h1 {
             font-size: 2.8rem;
@@ -244,7 +244,6 @@
             cursor: not-allowed;
         }
 
-        /* Seletor de múltiplas famílias */
         .family-selector-box {
             background: #fdfdfd;
             border: 2px dashed var(--verde-oliva);
@@ -314,7 +313,6 @@
             margin-top: 60px;
         }
 
-        /* Sistema de Abas (Menu Principal e Categorias) */
         .tabs-container {
             display: flex;
             justify-content: center;
@@ -345,7 +343,6 @@
             border-bottom-color: var(--verde-oliva);
         }
 
-        /* Abas Internas de Presentes (Layout de Tabela Organizada) */
         .gift-tabs-table {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -401,7 +398,6 @@
             display: block;
         }
 
-        /* Temas e Cards de Produtos */
         .tema-section {
             margin-top: 10px;
             margin-bottom: 20px;
@@ -452,7 +448,7 @@
         .produto-preco {
             font-size: 1.2rem;
             color: var(--texto-escuro);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-family: Arial, sans-serif;
             font-weight: bold;
         }
@@ -462,6 +458,50 @@
             margin-bottom: 12px;
             font-style: italic;
             font-weight: bold;
+        }
+
+        /* --- Barra e indicadores de progresso de cotas --- */
+        .cotas-info-box {
+            margin: 10px 0 12px 0;
+            text-align: left;
+        }
+
+        .cotas-texto-detalhe {
+            font-size: 0.82rem;
+            color: var(--texto-escuro);
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        .cotas-percentual {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--verde-escuro);
+        }
+
+        .cotas-percentual.concluido {
+            color: #27ae60;
+        }
+
+        .barra-progresso-fundo {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .barra-progresso-preenchimento {
+            height: 100%;
+            background-color: var(--verde-oliva);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .barra-progresso-preenchimento.concluido {
+            background-color: #27ae60;
         }
 
         .btn-presentear {
@@ -497,7 +537,6 @@
             padding: 20px;
         }
 
-        /* --- ESTILOS DO MODAL DO MERCADO PAGO --- */
         .modal {
             display: none;
             position: fixed;
@@ -556,15 +595,15 @@
             border-radius: 6px;
             margin: 15px 0;
         }
-		/* --- ESTILIZAÇÃO DAS IMAGENS DOS PRESENTES --- */
+
         .produto-foto-container {
             width: 100%;
-            height: 120px; /* Altura ideal para ilustrações minimalistas */
+            height: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 15px;
-            background-color: rgba(107, 142, 35, 0.03); /* Toque bem sutil de verde oliva no fundo */
+            background-color: rgba(107, 142, 35, 0.03);
             border-radius: 8px;
             padding: 10px;
         }
@@ -573,7 +612,7 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.05)); /* Sombra suave para dar profundidade */
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.05));
         }
     </style>
 </head>
@@ -581,7 +620,6 @@
 
 <header>
     <div class="logo-box">
-        <!-- Alterado de Logo.jfif para Logo.svg -->
         <img class="logo-img" src="Imagens/logo.svg" alt="Logo Adilson & Débora">
     </div>
     <h1>Adilson & Débora</h1>
@@ -640,7 +678,6 @@
         <!-- Seção Interativa -->
         <div class="section" id="interacao-convidados">
             
-            <!-- Menu das Abas Principais -->
             <div class="tabs-container">
                 <button class="tab-btn active" onclick="switchTab('rsvp-panel', this)">Confirmar Presença</button>
                 <button class="tab-btn" onclick="switchTab('presentes-panel', this)">Lista de Presentes</button>
@@ -678,7 +715,6 @@
             <div id="presentes-panel" class="tab-content">
                 <p style="text-align: center; margin-bottom: 30px;">Sua presença é o nosso maior presente! Caso deseje nos abençoar com algo a mais, escolha um item da nossa lista abaixo:</p>
                 
-                <!-- Abas em Formato de Tabela Organizada -->
                 <div class="gift-tabs-table">
                     <button class="gift-tab-item active" onclick="filtrarCategoria('Eletrodomésticos', this)">Eletrodomésticos</button>
                     <button class="gift-tab-item" onclick="filtrarCategoria('Móveis', this)">Móveis</button>
@@ -697,7 +733,7 @@
 
     </div>
 
-    <!-- --- MODAL DE SELEÇÃO DE COTAS E DADOS DO PAGAMENTO --- -->
+    <!-- MODAL DE SELEÇÃO DE COTAS E PAGAMENTO -->
     <div id="modal-pagamento" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="fecharModal()">&times;</span>
@@ -708,8 +744,9 @@
 
             <div id="container-cotas-selecao">
                 <label for="comprador-cotas">Quantidade de Cotas:</label>
-                <input type="number" id="comprador-cotas" min="1" value="1" oninput="atualizarTotalModal()">
-                <p style="font-size: 0.85rem; color: #555; margin-top: -10px; margin-bottom: 15px;" id="texto-max-cotas"></p>
+                <select id="comprador-cotas" onchange="atualizarTotalModal()" style="width: 100%; padding: 12px 15px; border: 1px solid #c3cbd0; border-radius: 6px; font-size: 1rem; margin-bottom: 15px; background-color: var(--branco);">
+                </select>
+                <p style="font-size: 0.85rem; color: #555; margin-top: -5px; margin-bottom: 15px;" id="texto-max-cotas"></p>
             </div>
 
             <div class="total-payment" id="modal-valor-total">
@@ -723,7 +760,8 @@
     <footer>
         <p>© 2026 Casamento Adilson & Débora. Todos os direitos reservados.</p>
     </footer>
-<script>
+
+    <script>
         const urlWebhook = "https://script.google.com/macros/s/AKfycbyFWvs29R7VWbTlGAZu8ZJZqxnca7nPocyaFXxDQN0oJXNAYTmCM9wIGq754NGWtR2aiw/exec";
 
         let dadosGrupoAtual = null;
@@ -785,17 +823,14 @@
                         return;
                     }
 
-                    // CORREÇÃO AQUI: Se 'ativo' não vier na planilha, assume TRUE por padrão para não ocultar os itens
                     todosPresentesDaPlanilha = produtos.filter(item => {
                         if (item.ativo === undefined || item.ativo === null) {
-                            return true; // Se a coluna não existe, exibe o produto
+                            return true;
                         }
                         return String(item.ativo).toUpperCase() === 'TRUE';
                     });
 
                     window.listaGlobalPresentes = todosPresentesDaPlanilha;
-
-                    // Executa o filtro inicial
                     filtrarCategoriaInicial();
                 })
                 .catch(err => {
@@ -892,23 +927,37 @@
                     let isDisponivel = true;
                     let statusTexto = 'Disponível';
                     let statusCor = 'var(--verde-oliva)';
+                    let blocoCotasHtml = '';
 
                     if (prod.valor_cota > 0 && prod.valor_total > 0) {
                         const maxCotas = Math.round(prod.valor_total / prod.valor_cota);
-                        if (prod.cotas_vendidas >= maxCotas) {
+                        const cotasVendidas = prod.cotas_vendidas || 0;
+                        let percentual = Math.round((cotasVendidas / maxCotas) * 100);
+                        if (percentual > 100) percentual = 100;
+
+                        const isConcluido = percentual >= 100;
+
+                        if (cotasVendidas >= maxCotas) {
                             isDisponivel = false;
                             statusTexto = 'Esgotado';
                             statusCor = '#c0392b';
-                        } else if (prod.cotas_vendidas > 0) {
-                            statusTexto = `${prod.cotas_vendidas} cota(s) comprada(s)`;
                         }
+
+                        blocoCotasHtml = `
+                            <div class="cotas-info-box">
+                                <div class="cotas-texto-detalhe">
+                                    <span>Cotas: ${cotasVendidas} / ${maxCotas}</span>
+                                    <span class="cotas-percentual ${isConcluido ? 'concluido' : ''}">${percentual}%</span>
+                                </div>
+                                <div class="barra-progresso-fundo">
+                                    <div class="barra-progresso-preenchimento ${isConcluido ? 'concluido' : ''}" style="width: ${percentual}%;"></div>
+                                </div>
+                            </div>
+                        `;
                     }
 
-                    // Define o caminho da imagem dinâmica vinda da planilha. 
-                    // Se a imagem na planilha for "geladeira.svg", o caminho final será "Imagens/geladeira.svg"
                     const caminhoImagem = prod.imagem ? `Imagens/${prod.imagem}` : '';
 
-                    // Montagem do Card com a foto inclusa no topo
                     card.innerHTML = `
                         ${caminhoImagem ? `
                         <div class="produto-foto-container" id="container-foto-${prod.id}">
@@ -919,6 +968,7 @@
                             <div>
                                 <div class="produto-nome">${prod.nome}</div>
                                 <div class="produto-preco">${precoFormatado}</div>
+                                ${blocoCotasHtml}
                                 <div class="produto-status" style="color: ${statusCor}">${statusTexto}</div>
                             </div>
                             <button class="btn-presentear" ${!isDisponivel ? 'disabled' : ''} onclick="abrirModalCompra(${prod.id})" style="margin-top: 15px;">
@@ -934,7 +984,6 @@
             }
         }
 
-        // --- CONTROLE DE COMPRA COM MERCADO PAGO ---
         function abrirModalCompra(idPresente) {
             if (!window.listaGlobalPresentes) return;
             
@@ -945,19 +994,28 @@
             document.getElementById('comprador-nome').value = '';
             
             const divCotas = document.getElementById('container-cotas-selecao');
-            const inputCotas = document.getElementById('comprador-cotas');
+            const selectCotas = document.getElementById('comprador-cotas');
+            selectCotas.innerHTML = ''; 
             
             if (presenteSelecionado.valor_cota > 0) {
                 divCotas.style.display = 'block';
-                inputCotas.value = 1;
                 
                 const maxCotas = Math.round(presenteSelecionado.valor_total / presenteSelecionado.valor_cota);
                 const cotasDisponiveis = maxCotas - (presenteSelecionado.cotas_vendidas || 0);
-                inputCotas.max = cotasDisponiveis;
-                document.getElementById('texto-max-cotas').innerText = `Cada cota custa R$ ${presenteSelecionado.valor_cota.toFixed(2)}. ${cotasDisponiveis} cotas disponíveis.`;
+
+                for (let i = 1; i <= cotasDisponiveis; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.innerText = `${i} ${i === 1 ? 'cota' : 'cotas'} (R$ ${(i * presenteSelecionado.valor_cota).toFixed(2)})`;
+                    selectCotas.appendChild(option);
+                }
+
+                document.getElementById('texto-max-cotas').innerText = `Valor por cota: R$ ${presenteSelecionado.valor_cota.toFixed(2)}. Restam ${cotasDisponiveis} cotas.`;
             } else {
                 divCotas.style.display = 'none';
-                inputCotas.value = 1;
+                const option = document.createElement('option');
+                option.value = 1;
+                selectCotas.appendChild(option);
             }
 
             atualizarTotalModal();
@@ -972,14 +1030,8 @@
         function atualizarTotalModal() {
             if (!presenteSelecionado) return;
 
-            const inputCotas = document.getElementById('comprador-cotas');
-            let cotas = parseInt(inputCotas.value) || 1;
-            if (cotas < 1) cotas = 1;
-
-            if (inputCotas.max && cotas > parseInt(inputCotas.max)) {
-                cotas = parseInt(inputCotas.max);
-                inputCotas.value = cotas;
-            }
+            const selectCotas = document.getElementById('comprador-cotas');
+            let cotas = parseInt(selectCotas.value) || 1;
 
             const valorUnitario = presenteSelecionado.valor_cota > 0 ? presenteSelecionado.valor_cota : presenteSelecionado.valor_total;
             const total = valorUnitario * cotas;
@@ -999,7 +1051,8 @@
             btnPagamento.innerText = "GERANDO LINK DE PAGAMENTO...";
             btnPagamento.disabled = true;
 
-            const cotas = parseInt(document.getElementById('comprador-cotas').value) || 1;
+            const selectCotas = document.getElementById('comprador-cotas');
+            const cotas = parseInt(selectCotas.value) || 1;
             const valorUnitario = presenteSelecionado.valor_cota > 0 ? presenteSelecionado.valor_cota : presenteSelecionado.valor_total;
 
             const dadosPagamento = {
@@ -1038,7 +1091,6 @@
             });
         }
 
-        // --- SISTEMA ORIGINAL RSVP ---
         function limparTexto(texto) {
             return texto
                 .normalize("NFD")
@@ -1187,7 +1239,6 @@
                 msgBox.style.display = 'none';
             }
         }
-    
     </script>
 </body>
 </html>
